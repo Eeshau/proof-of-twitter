@@ -154,3 +154,16 @@ If you want to update the UI based on your own zkeys and contracts, please make 
 ## History
 
 This repo was originally part of the [zk-email-verify](https://github.com/zkemail/zk-email-verify). Please refer there for the commit history and original contributors.
+
+
+
+
+
+
+# NOTES FROM EESHA
+## things I added 
+- yarn add -D tailwindcss postcss autoprefixer
+- yarn add @mui/material @emotion/react @emotion/styled
+- yarn add @mui/icons-material
+- yarn add -D react-router-dom
+# proof-of-twitter
