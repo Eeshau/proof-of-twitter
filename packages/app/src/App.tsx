@@ -8,35 +8,17 @@ import {
 } from "react-router-dom";
 import { useLocation } from "react-use";
 import styled from "styled-components";
+
 import { ConnectButton } from "@rainbow-me/rainbowkit";
+import Nav from './components/Nav'
 
-const NavSection = () => {
-  const { pathname } = useLocation();
-
-  return (
-    <Nav>
-      <Logo to={"https://prove.email/"}>
-        ZK-Email
-      </Logo>
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "1rem",
-        }}
-      >
-        <DocsLink href="https://prove.email/docs">Docs</DocsLink>
-        <ConnectButton />
-      </div>
-    </Nav>
-  );
-};
 
 const App = () => {
+  const { pathname } = useLocation();
   return (
     <Router>
       <div>
-        <NavSection />
+        <Nav/>
 
         <Routes>
           <Route path="/" element={<MainPage />} />
@@ -57,12 +39,12 @@ const Logo = styled(Link)`
   font-size: 1.2rem;
 `;
 
-const Nav = styled.nav`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin: 12px;
-`;
+// const Nav = styled.nav`
+//   display: flex;
+//   align-items: center;
+//   justify-content: space-between;
+//   margin: 12px;
+// `;
 
 const DocsLink = styled.a`
   color: rgba(255, 255, 255, 0.8);

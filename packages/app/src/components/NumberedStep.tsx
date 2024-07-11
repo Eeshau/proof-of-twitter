@@ -21,7 +21,7 @@ const NumberedStepContainer = styled(Row)`
   gap: 1rem;
   border-radius: 4px;
   padding: 8px;
-  color: #fff;
+  color: "#000000"
 `;
 
 const NumberedStepLabel = styled(CenterAllDiv)`

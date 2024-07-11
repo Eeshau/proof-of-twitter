@@ -161,9 +161,14 @@ This repo was originally part of the [zk-email-verify](https://github.com/zkemai
 
 
 # NOTES FROM EESHA
+- new frontend for https://twitter.prove.email/
+- designs here https://www.figma.com/design/gLBvW6yO3fhISFxWO25UWv/Proof-Of-Twitter-Mocks?node-id=0-1&t=PgzbbSELHXuDTcUj-1 
+
+
 ## things I added 
 - yarn add -D tailwindcss postcss autoprefixer
 - yarn add @mui/material @emotion/react @emotion/styled
 - yarn add @mui/icons-material
 - yarn add -D react-router-dom
-# proof-of-twitter
+
+
