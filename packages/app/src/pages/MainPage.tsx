@@ -237,6 +237,9 @@ export const MainPage: React.FC<{}> = (props) => {
           }
         );
         setStatus("proof-files-downloaded-successfully");
+        
+
+        
       } catch (e) {
         console.log(e);
         setDisplayMessage("Error downloading proof files");
@@ -273,7 +276,7 @@ export const MainPage: React.FC<{}> = (props) => {
     <Grid container>
 
     <Grid item xs={6} sx={{backgroundColor:'#FFFFFF', padding:'20px', color:'#000000'}}>
-      {/* <Container> */}
+
         <Stepper
           steps={steps}
           activeStep={activeStep}
@@ -291,36 +294,708 @@ export const MainPage: React.FC<{}> = (props) => {
 
 
         {activeStep ==1 && (
+        <Box>
           <Box sx={{marginTop:'80px', marginBottom: '40px'}}>
             <Typography variant='h1'>COPY AND PASTE THE EMAIL DKIM SIG</Typography>
             <Typography>In your inbox, find the email from Twitter and click the three dot menu, then "Show original" then "Copy to clipboard". If on Outlook, download the original email as .eml and copy it instead. Copy paste or drop that into the box below. Note that we cannot use this to phish you: we do not know your password, and we never get this email info because we have no server at all. We are actively searching for a less sketchy email.</Typography>
           </Box>
-        )}
+
+          <Column>
+          <SubHeader>Input</SubHeader>
+          {inputMethod || !import.meta.env.VITE_GOOGLE_CLIENT_ID ? null : (
+            <EmailInputMethod
+              onClickGoogle={() => {
+                try {
+                  setIsFetchEmailLoading(true);
+                  setInputMethod("GOOGLE");
+                  googleLogIn();
+                } catch (e) {
+                  console.log(e);
+                  setIsFetchEmailLoading(false);
+                }
+              }}
+              onClickEMLFile={() => {
+                setInputMethod("EML_FILE");
+              }}
+            />
+          )}
+          {inputMethod ? (
+            <TextButton onClick={() => setInputMethod(null)}>
+              ←{"  "}Go Back
+            </TextButton>
+          ) : null}
+          {inputMethod === "GOOGLE" ? (
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                flexDirection: "column",
+                padding: "1.25rem",
+              }}
+            >
+              {isFetchEmailLoading ? (
+                <div className="loader" />
+              ) : (
+                fetchedEmails.map((email, index) => (
+                  <div
+                    style={{
+                      borderBottom: "1px solid white",
+                      width: "100%",
+                      padding: "0 1rem",
+                      display: "flex",
+                      justifyContent: "space-between",
+                      color:
+                        email.decodedContents === emailFull
+                          ? "#8272e4"
+                          : "white",
+                      borderTop: index === 0 ? "1px solid white" : "none", // Conditional border top
+                    }}
+                    onClick={() => {
+                      setEmailFull(email.decodedContents);
+                    }}
+                  >
+                    <p>{email.subject}</p>
+                    <p>{formatDateTime(email.internalDate)}</p>
+                  </div>
+                ))
+              )}
+            </div>
+          ) : null}
+          {inputMethod === "EML_FILE" || !import.meta.env.VITE_GOOGLE_CLIENT_ID ? (
+            <>
+              {" "}
+              <DragAndDropTextBox onFileDrop={onFileDrop} />
+              <h3
+                style={{
+                  textAlign: "center",
+                  marginTop: "0rem",
+                  marginBottom: "0rem",
+                }}
+              >
+                OR
+              </h3>
+              <LabeledTextArea
+                label="Full Email with Headers"
+                value={emailFull}
+                onChange={(e) => {
+                  setEmailFull(e.currentTarget.value);
+                }}
+              />
+            </>
+          ) : null}
+
+
+          {/* <SingleLineInput
+            label="Ethereum Address"
+            value={ethereumAddress}
+            onChange={(e) => {
+              setEthereumAddress(e.currentTarget.value);
+            }}
+          />
+          <Button
+            data-testid="prove-button"
+            disabled={
+              displayMessage !== "Prove" ||
+              emailFull.length === 0 ||
+              ethereumAddress.length === 0 ||
+              status !== "proof-files-downloaded-successfully"
+            }
+            onClick={async () => {
+              const emailBuffer = rawEmailToBuffer(emailFull); // Cleaned email as buffer
+
+              let input: ITwitterCircuitInputs;
+              try {
+                setDisplayMessage("Generating proof...");
+                setStatus("generating-input");
+
+                input = await generateTwitterVerifierCircuitInputs(
+                  emailBuffer,
+                  ethereumAddress
+                );
+
+                console.log("Generated input:", JSON.stringify(input));
+              } catch (e) {
+                console.log("Error generating input", e);
+                setDisplayMessage("Prove");
+                setStatus("error-bad-input");
+                return;
+              }
+
+              console.time("zk-gen");
+              recordTimeForActivity("startedProving");
+              setDisplayMessage(
+                "Starting proof generation... (this will take 6-10 minutes and ~5GB RAM)"
+              );
+              setStatus("generating-proof");
+              console.log("Starting proof generation");
+              // alert("Generating proof, will fail due to input");
+              const { proof, publicSignals } = await generateProof(
+                input,
+                // @ts-ignore
+                import.meta.env.VITE_CIRCUIT_ARTIFACTS_URL,
+                CIRCUIT_NAME
+              );
+              //const proof = JSON.parse('{"pi_a": ["19201501460375869359786976350200749752225831881815567077814357716475109214225", "11505143118120261821370828666956392917988845645366364291926723724764197308214", "1"], "pi_b": [["17114997753466635923095897108905313066875545082621248342234075865495571603410", "7192405994185710518536526038522451195158265656066550519902313122056350381280"], ["13696222194662648890012762427265603087145644894565446235939768763001479304886", "2757027655603295785352548686090997179551660115030413843642436323047552012712"], ["1", "0"]], "pi_c": ["6168386124525054064559735110298802977718009746891233616490776755671099515304", "11077116868070103472532367637450067545191977757024528865783681032080180232316", "1"], "protocol": "groth16", "curve": "bn128"}');
+              //const publicSignals = JSON.parse('["0", "0", "0", "0", "0", "0", "0", "0", "32767059066617856", "30803244233155956", "0", "0", "0", "0", "27917065853693287", "28015", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "113659471951225", "0", "0", "1634582323953821262989958727173988295", "1938094444722442142315201757874145583", "375300260153333632727697921604599470", "1369658125109277828425429339149824874", "1589384595547333389911397650751436647", "1428144289938431173655248321840778928", "1919508490085653366961918211405731923", "2358009612379481320362782200045159837", "518833500408858308962881361452944175", "1163210548821508924802510293967109414", "1361351910698751746280135795885107181", "1445969488612593115566934629427756345", "2457340995040159831545380614838948388", "2612807374136932899648418365680887439", "16021263889082005631675788949457422", "299744519975649772895460843780023483", "3933359104846508935112096715593287", "556307310756571904145052207427031380052712977221"]');
+              console.log("Finished proof generation");
+              console.timeEnd("zk-gen");
+              recordTimeForActivity("finishedProving");
+
+              console.log("publicSignals", publicSignals);
+
+              // alert("Done generating proof");
+              setProof(JSON.stringify(proof));
+              // let kek = publicSignals.map((x: string) => BigInt(x));
+              // let soln = packedNBytesToString(kek.slice(0, 12));
+              // let soln2 = packedNBytesToString(kek.slice(12, 147));
+              // let soln3 = packedNBytesToString(kek.slice(147, 150));
+              // setPublicSignals(`From: ${soln}\nTo: ${soln2}\nUsername: ${soln3}`);
+              setPublicSignals(JSON.stringify(publicSignals));
+
+              if (!input) {
+                setStatus("error-failed-to-prove");
+                return;
+              }
+              setLastAction("sign");
+              setDisplayMessage("Finished computing ZK proof");
+              setStatus("done");
+
+              // once the proof-files-downloaded-successfully set the activestep number to 4 to move to the output screen
+              setActiveStep(4)
+
+              try {
+                (window as any).cJson = JSON.stringify(input);
+                console.log(
+                  "wrote circuit input to window.cJson. Run copy(cJson)"
+                );
+              } catch (e) {
+                console.error(e);
+              }
+            }}
+          >
+            {displayMessage}
+          </Button> */}
+
+          {displayMessage ===
+            "Downloading compressed proving files... (this may take a few minutes)" && (
+            <ProgressBar
+              width={downloadProgress * 10}
+              label={`${downloadProgress} / 10 items`}
+            />
+          )}
+          <ProcessStatus status={status}>
+            {status !== "not-started" ? (
+              <div>
+                Status:
+                <span data-testid={"status-" + status}>{status}</span>
+              </div>
+            ) : (
+              <div data-testid={"status-" + status}></div>
+            )}
+            <TimerDisplay timers={stopwatch} />
+          </ProcessStatus>
+          </Column>
+          </Box>          
+          )}
+
+
+
+
+
 
 
         {activeStep ==2 && (
-          <Box sx={{marginTop:'80px', marginBottom: '40px'}}>
-            <Typography variant='h1'>ADD ETHEREUM ADDRESS TO SECURE PROOF</Typography>
-            <Typography>Paste in your sending Ethereum address. This ensures that no one else can "steal" your proof for another account (frontrunning protection!). Click "Prove". Note it is completely client side and open source, and no server ever sees your private information.</Typography>
-          </Box>
-          
+          <Box>
+            <Box sx={{marginTop:'80px', marginBottom: '40px'}}>
+              <Typography variant='h1'>ADD ETHEREUM ADDRESS TO SECURE PROOF</Typography>
+              <Typography>Paste in your sending Ethereum address. This ensures that no one else can "steal" your proof for another account (frontrunning protection!). Click "Prove". Note it is completely client side and open source, and no server ever sees your private information.</Typography>
+            </Box>
 
+            <Column>
+              <SubHeader>Input</SubHeader>
+              {inputMethod || !import.meta.env.VITE_GOOGLE_CLIENT_ID ? null : (
+                <EmailInputMethod
+                  onClickGoogle={() => {
+                    try {
+                      setIsFetchEmailLoading(true);
+                      setInputMethod("GOOGLE");
+                      googleLogIn();
+                    } catch (e) {
+                      console.log(e);
+                      setIsFetchEmailLoading(false);
+                    }
+                  }}
+                  onClickEMLFile={() => {
+                    setInputMethod("EML_FILE");
+                  }}
+                />
+              )}
+              {inputMethod ? (
+                <TextButton onClick={() => setInputMethod(null)}>
+                  ←{"  "}Go Back
+                </TextButton>
+              ) : null}
+              {inputMethod === "GOOGLE" ? (
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    flexDirection: "column",
+                    padding: "1.25rem",
+                  }}
+                >
+                  {isFetchEmailLoading ? (
+                    <div className="loader" />
+                  ) : (
+                    fetchedEmails.map((email, index) => (
+                      <div
+                        style={{
+                          borderBottom: "1px solid white",
+                          width: "100%",
+                          padding: "0 1rem",
+                          display: "flex",
+                          justifyContent: "space-between",
+                          color:
+                            email.decodedContents === emailFull
+                              ? "#8272e4"
+                              : "white",
+                          borderTop: index === 0 ? "1px solid white" : "none", // Conditional border top
+                        }}
+                        onClick={() => {
+                          setEmailFull(email.decodedContents);
+                        }}
+                      >
+                        <p>{email.subject}</p>
+                        <p>{formatDateTime(email.internalDate)}</p>
+                      </div>
+                    ))
+                  )}
+                </div>
+              ) : null}
+              {inputMethod === "EML_FILE" || !import.meta.env.VITE_GOOGLE_CLIENT_ID ? (
+                <>
+                  {" "}
+                  <DragAndDropTextBox onFileDrop={onFileDrop} />
+                  <h3
+                    style={{
+                      textAlign: "center",
+                      marginTop: "0rem",
+                      marginBottom: "0rem",
+                    }}
+                  >
+                    OR
+                  </h3>
+                  <LabeledTextArea
+                    label="Full Email with Headers"
+                    value={emailFull}
+                    onChange={(e) => {
+                      setEmailFull(e.currentTarget.value);
+                    }}
+                  />
+                </>
+              ) : null}
+              <SingleLineInput
+                label="Ethereum Address"
+                value={ethereumAddress}
+                onChange={(e) => {
+                  setEthereumAddress(e.currentTarget.value);
+                }}
+              />
+
+              {/* <Button
+                data-testid="prove-button"
+                disabled={
+                  displayMessage !== "Prove" ||
+                  emailFull.length === 0 ||
+                  ethereumAddress.length === 0 ||
+                  status !== "proof-files-downloaded-successfully"
+                }
+                onClick={async () => {
+                  const emailBuffer = rawEmailToBuffer(emailFull); // Cleaned email as buffer
+
+                  let input: ITwitterCircuitInputs;
+                  try {
+                    setDisplayMessage("Generating proof...");
+                    setStatus("generating-input");
+
+                    input = await generateTwitterVerifierCircuitInputs(
+                      emailBuffer,
+                      ethereumAddress
+                    );
+
+                    console.log("Generated input:", JSON.stringify(input));
+                  } catch (e) {
+                    console.log("Error generating input", e);
+                    setDisplayMessage("Prove");
+                    setStatus("error-bad-input");
+                    return;
+                  }
+
+                  console.time("zk-gen");
+                  recordTimeForActivity("startedProving");
+                  setDisplayMessage(
+                    "Starting proof generation... (this will take 6-10 minutes and ~5GB RAM)"
+                  );
+                  setStatus("generating-proof");
+                  console.log("Starting proof generation");
+                  // alert("Generating proof, will fail due to input");
+                  const { proof, publicSignals } = await generateProof(
+                    input,
+                    // @ts-ignore
+                    import.meta.env.VITE_CIRCUIT_ARTIFACTS_URL,
+                    CIRCUIT_NAME
+                  );
+                  //const proof = JSON.parse('{"pi_a": ["19201501460375869359786976350200749752225831881815567077814357716475109214225", "11505143118120261821370828666956392917988845645366364291926723724764197308214", "1"], "pi_b": [["17114997753466635923095897108905313066875545082621248342234075865495571603410", "7192405994185710518536526038522451195158265656066550519902313122056350381280"], ["13696222194662648890012762427265603087145644894565446235939768763001479304886", "2757027655603295785352548686090997179551660115030413843642436323047552012712"], ["1", "0"]], "pi_c": ["6168386124525054064559735110298802977718009746891233616490776755671099515304", "11077116868070103472532367637450067545191977757024528865783681032080180232316", "1"], "protocol": "groth16", "curve": "bn128"}');
+                  //const publicSignals = JSON.parse('["0", "0", "0", "0", "0", "0", "0", "0", "32767059066617856", "30803244233155956", "0", "0", "0", "0", "27917065853693287", "28015", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "113659471951225", "0", "0", "1634582323953821262989958727173988295", "1938094444722442142315201757874145583", "375300260153333632727697921604599470", "1369658125109277828425429339149824874", "1589384595547333389911397650751436647", "1428144289938431173655248321840778928", "1919508490085653366961918211405731923", "2358009612379481320362782200045159837", "518833500408858308962881361452944175", "1163210548821508924802510293967109414", "1361351910698751746280135795885107181", "1445969488612593115566934629427756345", "2457340995040159831545380614838948388", "2612807374136932899648418365680887439", "16021263889082005631675788949457422", "299744519975649772895460843780023483", "3933359104846508935112096715593287", "556307310756571904145052207427031380052712977221"]');
+                  console.log("Finished proof generation");
+                  console.timeEnd("zk-gen");
+                  recordTimeForActivity("finishedProving");
+
+                  console.log("publicSignals", publicSignals);
+
+                  // alert("Done generating proof");
+                  setProof(JSON.stringify(proof));
+                  // let kek = publicSignals.map((x: string) => BigInt(x));
+                  // let soln = packedNBytesToString(kek.slice(0, 12));
+                  // let soln2 = packedNBytesToString(kek.slice(12, 147));
+                  // let soln3 = packedNBytesToString(kek.slice(147, 150));
+                  // setPublicSignals(`From: ${soln}\nTo: ${soln2}\nUsername: ${soln3}`);
+                  setPublicSignals(JSON.stringify(publicSignals));
+
+                  if (!input) {
+                    setStatus("error-failed-to-prove");
+                    return;
+                  }
+                  setLastAction("sign");
+                  setDisplayMessage("Finished computing ZK proof");
+                  setStatus("done");
+                  try {
+                    (window as any).cJson = JSON.stringify(input);
+                    console.log(
+                      "wrote circuit input to window.cJson. Run copy(cJson)"
+                    );
+                  } catch (e) {
+                    console.error(e);
+                  }
+                }}
+              >
+                {displayMessage}
+              </Button> */}
+
+              {displayMessage ===
+                "Downloading compressed proving files... (this may take a few minutes)" && (
+                <ProgressBar
+                  width={downloadProgress * 10}
+                  label={`${downloadProgress} / 10 items`}
+                />
+              )}
+              <ProcessStatus status={status}>
+                {status !== "not-started" ? (
+                  <div>
+                    Status:
+                    <span data-testid={"status-" + status}>{status}</span>
+                  </div>
+                ) : (
+                  <div data-testid={"status-" + status}></div>
+                )}
+                <TimerDisplay timers={stopwatch} />
+              </ProcessStatus>
+            </Column>
+          </Box>          
         )}
 
 
+
+
+
+
+
         {activeStep ==3 && (
+        <Box>
           <Box sx={{marginTop:'80px', marginBottom: '40px'}}>
             <Typography variant='h1'>GENERATE PROOF USING INPUTS</Typography>
             <Typography>Click "Prove". Note it is completely client side and open source, and no server ever sees your private information.</Typography>
           </Box>
-  
+
+          <Column>
+          <SubHeader>Input</SubHeader>
+          {inputMethod || !import.meta.env.VITE_GOOGLE_CLIENT_ID ? null : (
+            <EmailInputMethod
+              onClickGoogle={() => {
+                try {
+                  setIsFetchEmailLoading(true);
+                  setInputMethod("GOOGLE");
+                  googleLogIn();
+                } catch (e) {
+                  console.log(e);
+                  setIsFetchEmailLoading(false);
+                }
+              }}
+              onClickEMLFile={() => {
+                setInputMethod("EML_FILE");
+              }}
+            />
+          )}
+          {inputMethod ? (
+            <TextButton onClick={() => setInputMethod(null)}>
+              ←{"  "}Go Back
+            </TextButton>
+          ) : null}
+          {inputMethod === "GOOGLE" ? (
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                flexDirection: "column",
+                padding: "1.25rem",
+              }}
+            >
+              {isFetchEmailLoading ? (
+                <div className="loader" />
+              ) : (
+                fetchedEmails.map((email, index) => (
+                  <div
+                    style={{
+                      borderBottom: "1px solid white",
+                      width: "100%",
+                      padding: "0 1rem",
+                      display: "flex",
+                      justifyContent: "space-between",
+                      color:
+                        email.decodedContents === emailFull
+                          ? "#8272e4"
+                          : "white",
+                      borderTop: index === 0 ? "1px solid white" : "none", // Conditional border top
+                    }}
+                    onClick={() => {
+                      setEmailFull(email.decodedContents);
+                    }}
+                  >
+                    <p>{email.subject}</p>
+                    <p>{formatDateTime(email.internalDate)}</p>
+                  </div>
+                ))
+              )}
+            </div>
+          ) : null}
+          {inputMethod === "EML_FILE" || !import.meta.env.VITE_GOOGLE_CLIENT_ID ? (
+            <>
+              {" "}
+              <DragAndDropTextBox onFileDrop={onFileDrop} />
+              <h3
+                style={{
+                  textAlign: "center",
+                  marginTop: "0rem",
+                  marginBottom: "0rem",
+                }}
+              >
+                OR
+              </h3>
+              <LabeledTextArea
+                label="Full Email with Headers"
+                value={emailFull}
+                onChange={(e) => {
+                  setEmailFull(e.currentTarget.value);
+                }}
+              />
+            </>
+          ) : null}
+          <SingleLineInput
+            label="Ethereum Address"
+            value={ethereumAddress}
+            onChange={(e) => {
+              setEthereumAddress(e.currentTarget.value);
+            }}
+          />
+          <Button
+            data-testid="prove-button"
+            disabled={
+              displayMessage !== "Prove" ||
+              emailFull.length === 0 ||
+              ethereumAddress.length === 0 ||
+              status !== "proof-files-downloaded-successfully"
+            }
+            onClick={async () => {
+              const emailBuffer = rawEmailToBuffer(emailFull); // Cleaned email as buffer
+
+              let input: ITwitterCircuitInputs;
+              try {
+                setDisplayMessage("Generating proof...");
+                setStatus("generating-input");
+
+                input = await generateTwitterVerifierCircuitInputs(
+                  emailBuffer,
+                  ethereumAddress
+                );
+
+                console.log("Generated input:", JSON.stringify(input));
+              } catch (e) {
+                console.log("Error generating input", e);
+                setDisplayMessage("Prove");
+                setStatus("error-bad-input");
+                return;
+              }
+
+              console.time("zk-gen");
+              recordTimeForActivity("startedProving");
+              setDisplayMessage(
+                "Starting proof generation... (this will take 6-10 minutes and ~5GB RAM)"
+              );
+              setStatus("generating-proof");
+              console.log("Starting proof generation");
+              // alert("Generating proof, will fail due to input");
+              const { proof, publicSignals } = await generateProof(
+                input,
+                // @ts-ignore
+                import.meta.env.VITE_CIRCUIT_ARTIFACTS_URL,
+                CIRCUIT_NAME
+              );
+              //const proof = JSON.parse('{"pi_a": ["19201501460375869359786976350200749752225831881815567077814357716475109214225", "11505143118120261821370828666956392917988845645366364291926723724764197308214", "1"], "pi_b": [["17114997753466635923095897108905313066875545082621248342234075865495571603410", "7192405994185710518536526038522451195158265656066550519902313122056350381280"], ["13696222194662648890012762427265603087145644894565446235939768763001479304886", "2757027655603295785352548686090997179551660115030413843642436323047552012712"], ["1", "0"]], "pi_c": ["6168386124525054064559735110298802977718009746891233616490776755671099515304", "11077116868070103472532367637450067545191977757024528865783681032080180232316", "1"], "protocol": "groth16", "curve": "bn128"}');
+              //const publicSignals = JSON.parse('["0", "0", "0", "0", "0", "0", "0", "0", "32767059066617856", "30803244233155956", "0", "0", "0", "0", "27917065853693287", "28015", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "113659471951225", "0", "0", "1634582323953821262989958727173988295", "1938094444722442142315201757874145583", "375300260153333632727697921604599470", "1369658125109277828425429339149824874", "1589384595547333389911397650751436647", "1428144289938431173655248321840778928", "1919508490085653366961918211405731923", "2358009612379481320362782200045159837", "518833500408858308962881361452944175", "1163210548821508924802510293967109414", "1361351910698751746280135795885107181", "1445969488612593115566934629427756345", "2457340995040159831545380614838948388", "2612807374136932899648418365680887439", "16021263889082005631675788949457422", "299744519975649772895460843780023483", "3933359104846508935112096715593287", "556307310756571904145052207427031380052712977221"]');
+              console.log("Finished proof generation");
+              console.timeEnd("zk-gen");
+              recordTimeForActivity("finishedProving");
+
+              console.log("publicSignals", publicSignals);
+
+              // alert("Done generating proof");
+              setProof(JSON.stringify(proof));
+              // let kek = publicSignals.map((x: string) => BigInt(x));
+              // let soln = packedNBytesToString(kek.slice(0, 12));
+              // let soln2 = packedNBytesToString(kek.slice(12, 147));
+              // let soln3 = packedNBytesToString(kek.slice(147, 150));
+              // setPublicSignals(`From: ${soln}\nTo: ${soln2}\nUsername: ${soln3}`);
+              setPublicSignals(JSON.stringify(publicSignals));
+
+              if (!input) {
+                setStatus("error-failed-to-prove");
+                return;
+              }
+              setLastAction("sign");
+              setDisplayMessage("Finished computing ZK proof");
+              setStatus("done");
+              try {
+                (window as any).cJson = JSON.stringify(input);
+                console.log(
+                  "wrote circuit input to window.cJson. Run copy(cJson)"
+                );
+              } catch (e) {
+                console.error(e);
+              }
+            }}
+          >
+            {displayMessage}
+          </Button>
+          {displayMessage ===
+            "Downloading compressed proving files... (this may take a few minutes)" && (
+            <ProgressBar
+              width={downloadProgress * 10}
+              label={`${downloadProgress} / 10 items`}
+            />
+          )}
+          <ProcessStatus status={status}>
+            {status !== "not-started" ? (
+              <div>
+                Status:
+                <span data-testid={"status-" + status}>{status}</span>
+              </div>
+            ) : (
+              <div data-testid={"status-" + status}></div>
+            )}
+            <TimerDisplay timers={stopwatch} />
+          </ProcessStatus>
+          </Column>
+          </Box>          
         )}
 
 
+
+
+
+
         {activeStep ==4 && (
-          <Box sx={{marginTop:'80px', marginBottom: '40px'}}>
-            <Typography variant='h1' sx={{marginTop:'80px'}}>VERIFY & MINT ON CHAIN TWITTER BADGE</Typography>
-            <Typography>Click "Verify" and then "Mint Twitter Badge On-Chain", and approve to mint the NFT badge that proves Twitter ownership! Note that it is 700K gas right now so only feasible on Sepolia, though we intend to reduce this soon.</Typography>
+          <Box>
+            <Box sx={{marginTop:'80px', marginBottom: '40px'}}>
+              <Typography variant='h1' sx={{marginTop:'80px'}}>VERIFY & MINT ON CHAIN TWITTER BADGE</Typography>
+              <Typography>Click "Verify" and then "Mint Twitter Badge On-Chain", and approve to mint the NFT badge that proves Twitter ownership! Note that it is 700K gas right now so only feasible on Sepolia, though we intend to reduce this soon.</Typography>
+            </Box>
+
+
+            <Column>
+              <SubHeader>Output</SubHeader>
+              <LabeledTextArea
+                label="Proof Output"
+                value={proof}
+                onChange={(e) => {
+                  setProof(e.currentTarget.value);
+                }}
+                warning={verificationMessage}
+                warningColor={verificationPassed ? "green" : "red"}
+              />
+              <LabeledTextArea
+                label="..."
+                value={publicSignals}
+                secret
+                onChange={(e) => {
+                  setPublicSignals(e.currentTarget.value);
+                }}
+                // warning={
+                // }
+              />
+              <Button
+                disabled={emailFull.trim().length === 0 || proof.length === 0}
+                onClick={async () => {
+                  try {
+                    setLastAction("verify");
+                    let ok = true;
+                    const res: boolean = await verifyProof(
+                      JSON.parse(proof),
+                      JSON.parse(publicSignals),
+                      // @ts-ignore
+                      import.meta.env.VITE_CIRCUIT_ARTIFACTS_URL,
+                      CIRCUIT_NAME
+                    );
+                    console.log(res);
+                    if (!res) throw Error("Verification failed!");
+                    setVerificationMessage("Passed!");
+                    setVerificationPassed(ok);
+                  } catch (er: any) {
+                    setVerificationMessage("Failed to verify " + er.toString());
+                    setVerificationPassed(false);
+                  }
+                }}
+              >
+                Verify
+              </Button>
+              <Button
+                disabled={!verificationPassed || isLoading || isSuccess || !write}
+                onClick={async () => {
+                  setStatus("sending-on-chain");
+                  write?.();
+                }}
+              >
+                {isSuccess
+                  ? "Successfully sent to chain!"
+                  : isLoading
+                  ? "Confirm in wallet"
+                  : !write
+                  ? "Connect Wallet first, scroll to top!"
+                  : verificationPassed
+                  ? "Mint Twitter badge on-chain"
+                  : "Verify first, before minting on-chain!"}
+              </Button>
+              {isSuccess && (
+                <div>
+                  Transaction:{" "}
+                  <a href={"https://sepolia.etherscan.io/tx/" + data?.hash}>
+                    {data?.hash}
+                  </a>
+                </div>
+              )}
+            </Column>
           </Box>
         )}
 
@@ -673,7 +1348,6 @@ export const MainPage: React.FC<{}> = (props) => {
               )}
             </Column>
           </Main> */}
-        {/* </Container> */}
         </Stepper>
       </Grid>
 
