@@ -320,24 +320,22 @@ const StepperComponent: React.FC<StepperComponentProps> = ({
 
   return (
     <Box sx={{ width: '100%', position: 'relative', marginY: '50px'}}>
+
+      <Box/>
+
+
+
       {/* Light grey bar */}
-      <Box
-        sx={{
-          position: 'absolute',
-          top: '100%',
-          left: 0,
-          right: 0,
-          height: '2px',
-          backgroundColor: '#e0e0e0',
-          zIndex: 1,
-          transform: 'translateY(-50%)'
+      <Box 
+        sx={{ 
+          display: 'flex',
+          alignItems: 'center', 
+          position: 'relative', 
+          zIndex: 2,
+          // backgroundColor:'green',
+          borderBottom: '1px solid #e0e0e0' ,
         }}
-      />
-
-
-
-
-      <Box sx={{ display: 'flex', alignItems: 'center', position: 'relative', zIndex: 2 }}>
+      >
         {steps.map((label, index) => (
           <React.Fragment key={label}>
             <Box
@@ -347,7 +345,7 @@ const StepperComponent: React.FC<StepperComponentProps> = ({
                 display: 'flex',
                 alignItems: 'center',
                 position: 'relative',
-                padding: '0 10px'
+                padding: '0 10px',
               }}
             >
               <Typography
@@ -357,7 +355,8 @@ const StepperComponent: React.FC<StepperComponentProps> = ({
                   fontWeight: activeStep === index ? 'bold' : 'regular',
                   color: activeStep === index ? 'black' : 'gray',
                   borderBottom: activeStep === index ? '2px solid black' : 'none',
-                  paddingBottom: '2px'
+                  paddingBottom: '2px',
+                  fontSize: {xs:'9px', sm:'11px', md:'12px', lg:'15px'}
                 }}
               >
                 {label}
@@ -374,18 +373,47 @@ const StepperComponent: React.FC<StepperComponentProps> = ({
         {children}
       </Box>
       
-      <Box sx={{ display: 'flex', width:'200px', justifyContent: 'space-between', marginTop: '20px' }}>
+      <Box sx={{ display: 'flex', width:'220px', justifyContent: 'space-between', marginTop: '20px' }}>
         <Button
           variant="contained"
           onClick={handleBack}
           disabled={activeStep === 0}
+          sx={{
+            textTransform:'none',
+            fontWeight:'regular',
+            padding: '10px 35px',
+            backgroundColor:'#1C1C1C',
+            border: '1px solid #1C1C1C',
+            marginY: '9px',
+            color:'#ffffff',
+            '&.Mui-disabled': {
+              backgroundColor: '#ffffff', // Change to desired disabled background color
+              color: '#1C1C1C', // Change to desired disabled text color
+              border: '1px solid #757575' // Change to desired disabled border color
+            }
+          }}
         >
           Back
         </Button>
+
         <Button
           variant="contained"
           onClick={handleNext}
           disabled={activeStep === steps.length - 1}
+          sx={{
+            textTransform:'none',
+            fontWeight:'regular',
+            padding: '10px 35px',
+            backgroundColor:'#1C1C1C',
+            border: '1px solid #1C1C1C',
+            marginY: '9px',
+            color:'#ffffff',
+            '&.Mui-disabled': {
+              backgroundColor: '#ffffff', // Change to desired disabled background color
+              color: '#1C1C1C', // Change to desired disabled text color
+              border: '1px solid #757575', // Change to desired disabled border color
+            }
+          }}
         >
           Next
         </Button>

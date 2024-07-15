@@ -1,40 +1,68 @@
+import React from 'react';
 import styled from "styled-components";
-import { Col } from "./Layout";
+import { useTheme, TextField, Box, Typography } from "@mui/material";
 
-export const SingleLineInput: React.FC<{
+interface SingleLineInputProps {
   label: string;
   value: any;
   onChange: (e: any) => void;
-}> = ({ label, onChange, value }) => {
+  highlighted?: boolean;
+}
+
+export const SingleLineInput: React.FC<SingleLineInputProps> = ({
+  label,
+  onChange,
+  value,
+  highlighted = false
+}) => {
+  
+  const theme = useTheme();
+
   return (
-    <InputContainer>
-      <label
-        style={{
-          color: "rgba(255, 255, 255, 0.8)",
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '8px',
+      }}
+    >
+      <Typography 
+        sx={{
+          color: theme.palette.secondary.main,
         }}
       >
         {label}
-      </label>
-      <Input onChange={onChange} value={value} placeholder={label} />
-    </InputContainer>
+      </Typography>
+      <TextField
+        value={value}
+        onChange={onChange}
+        placeholder={label}
+        variant="outlined"
+        fullWidth
+        InputProps={{
+          style: {
+            color: theme.palette.secondary.main,
+            background: "#F9F9F9",
+            borderRadius: "10px",
+            border: '1px solid #73767B'
+          },
+        }}
+        sx={{
+          "& .MuiOutlinedInput-root": {
+            "& fieldset": {
+              borderColor: highlighted ? theme.palette.accent.main : "rgba(255, 255, 255, 0.4)",
+              borderWidth: highlighted ? '2px' : '1px',
+            },
+            "&:hover fieldset": {
+              borderColor: highlighted ? theme.palette.accent.main : "#F9F9F9",
+            },
+            "&.Mui-focused fieldset": {
+              borderColor: theme.palette.accent.main,
+            },
+            transition: "all 0.2s ease-in-out",
+          },
+        }}
+      />
+    </Box>
   );
 };
-
-const InputContainer = styled(Col)`
-  gap: 8px;
-`;
-
-const Input = styled.input`
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  background: rgba(0, 0, 0, 0.3);
-  border-radius: 4px;
-  padding: 8px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  color: #fff;
-  transition: all 0.2s ease-in-out;
-  &:hover {
-    border: 1px solid rgba(255, 255, 255, 0.8);
-  }
-`;
