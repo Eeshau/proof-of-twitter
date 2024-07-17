@@ -37,6 +37,7 @@ import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward';
 import Video from "../components/Video";
 import Nav from "../components/Nav";
 import {useTheme} from "@mui/material";
+import StatusTag from "../components/StatusTag";
 
 const CIRCUIT_NAME = "twitter";
 
@@ -577,7 +578,7 @@ export const MainPage: React.FC<{}> = (props) => {
 
           <Column>
           <SubHeader>Input</SubHeader>
-          {inputMethod || !import.meta.env.VITE_GOOGLE_CLIENT_ID ? null : (
+          {/* {inputMethod || !import.meta.env.VITE_GOOGLE_CLIENT_ID ? null : (
             <EmailInputMethod
               disabled={true}
               onClickGoogle={() => {
@@ -595,7 +596,7 @@ export const MainPage: React.FC<{}> = (props) => {
               }}
             />
           )}
-          {/* {inputMethod ? (
+          {inputMethod ? (
             <TextButton onClick={() => setInputMethod(null)}>
               ←{"  "}Go Back
             </TextButton>
@@ -797,14 +798,17 @@ export const MainPage: React.FC<{}> = (props) => {
             <Column>
               <SubHeader>Output</SubHeader>
               
+              {verificationMessage && (
+                <StatusTag statusMessage={verificationMessage} statusPassed={verificationPassed}/>
+              )}
+
+
               <LabeledTextArea
                 label="Proof Output"
                 value={proof}
                 onChange={(e) => {
                   setProof(e.currentTarget.value);
                 }}
-                warning={verificationMessage}
-                warningColor={verificationPassed ? "green" : "red"} //green or red
               />
 
               <LabeledTextArea

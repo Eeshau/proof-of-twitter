@@ -31,6 +31,7 @@ export const SingleLineInput: React.FC<SingleLineInputProps> = ({
       <Typography 
         sx={{
           color: theme.palette.secondary.main,
+          fontWeight: 'medium',
         }}
       >
         {label}
