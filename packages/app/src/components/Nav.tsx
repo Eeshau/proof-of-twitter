@@ -84,7 +84,7 @@ const CustomConnectButton = () => {
                   <Box
                     component="span"
                     sx={{
-                      backgroundColor: '#2c2c2c',
+                      backgroundColor: '#3C3C3C',
                       padding: '4px 6px',
                       borderRadius: '7px',
                       display: 'flex',
@@ -99,7 +99,7 @@ const CustomConnectButton = () => {
                       height="24"
                       style={{ borderRadius: '50%' }}
                     />
-                    <Typography variant="body2" sx={{ color: '#ffffff' }}>
+                    <Typography variant="body2" sx={{ color: '#ffffff', paddingX:'3px'}}>
                       {account.displayName}
                     </Typography>
                   </Box>
@@ -117,10 +117,10 @@ const Nav = () => {
   return (
     <Grid container >
 
-    <Grid item xs={12} md={6}>
+    <Grid item xs={12} md={12}>
         <Box display='flex' justifyContent='space-between' padding='20px' alignContent='center' alignItems='center' width='100%' sx={{ backgroundColor: '#ffffff', borderBottom: '1px solid #D9D9D9' }}>
         <Link to={"/"}>
-            <Typography fontWeight='bold' sx={{ letterSpacing: -0.5 }}>PROOF OF TWITTER</Typography>
+            <Typography fontWeight='bold' sx={{ letterSpacing: -0.5, paddingX:'20px'}}>PROOF OF TWITTER</Typography>
         </Link>
 
         <Box display='flex' justifyContent='space-between' gap='50px' alignContent='center' alignItems='center' marginRight='50px'>

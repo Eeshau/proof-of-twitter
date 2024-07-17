@@ -61,6 +61,7 @@ const DragAndDropTextBoxWrapper = styled.div<{ highlighted: boolean }>`
     highlighted
       ? css`
           border-color: ${theme.palette.accent.main};
+		  color: ${theme.palette.accent.main}
         `
       : ''}
 `;
@@ -92,9 +93,9 @@ const DragAndDropTextBox: React.FC<Props> = ({ onFileDrop, highlighted = false }
 				onDrop={(e) => handleDrop(e, onFileDrop)}
 			>
 				{dragging ? (
-					<Typography color={theme.palette.accent.main}>Drop here</Typography>
+					<div> Drop here</div>
 				) : (
-					<Typography color={theme.palette.accent.main}>Drop .eml file here</Typography>
+					<div>Drop .eml file here </div>
 				)}
 			</DragAndDropTextBoxWrapper>
 		</ThemeProvider>

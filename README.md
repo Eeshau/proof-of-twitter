@@ -170,5 +170,6 @@ This repo was originally part of the [zk-email-verify](https://github.com/zkemai
 - yarn add @mui/material @emotion/react @emotion/styled
 - yarn add @mui/icons-material
 - yarn add -D react-router-dom
+- yarn add react-youtube
 
 

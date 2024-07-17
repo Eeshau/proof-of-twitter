@@ -286,6 +286,11 @@
 
 // export default StepperComponent;
 
+
+
+
+
+
 import React, { ReactNode } from 'react';
 import { Box, Typography, Button } from '@mui/material';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
@@ -315,25 +320,17 @@ const StepperComponent: React.FC<StepperComponentProps> = ({
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
-
-
-
   return (
-    <Box sx={{ width: '100%', position: 'relative', marginY: '50px'}}>
-
-      <Box/>
-
-
-
+    <Box sx={{ width: '100%', position: 'relative', marginY: '50px' }}>
+      <Box />
       {/* Light grey bar */}
-      <Box 
-        sx={{ 
+      <Box
+        sx={{
           display: 'flex',
-          alignItems: 'center', 
-          position: 'relative', 
+          alignItems: 'center',
+          position: 'relative',
           zIndex: 2,
-          // backgroundColor:'green',
-          borderBottom: '1px solid #e0e0e0' ,
+          borderBottom: '1px solid #e0e0e0',
         }}
       >
         {steps.map((label, index) => (
@@ -356,7 +353,7 @@ const StepperComponent: React.FC<StepperComponentProps> = ({
                   color: activeStep === index ? 'black' : 'gray',
                   borderBottom: activeStep === index ? '2px solid black' : 'none',
                   paddingBottom: '2px',
-                  fontSize: {xs:'9px', sm:'11px', md:'12px', lg:'15px'}
+                  fontSize: { xs: '9px', sm: '10px', md: '11px', lg: '12px' }
                 }}
               >
                 {label}
@@ -372,42 +369,48 @@ const StepperComponent: React.FC<StepperComponentProps> = ({
       <Box sx={{ marginTop: '20px' }}>
         {children}
       </Box>
-      
-      <Box sx={{ display: 'flex', width:'220px', justifyContent: 'space-between', marginTop: '20px' }}>
-        <Button
-          variant="contained"
-          onClick={handleBack}
-          disabled={activeStep === 0}
-          sx={{
-            textTransform:'none',
-            fontWeight:'regular',
-            padding: '10px 35px',
-            backgroundColor:'#1C1C1C',
-            border: '1px solid #1C1C1C',
-            marginY: '9px',
-            color:'#ffffff',
-            '&.Mui-disabled': {
-              backgroundColor: '#ffffff', // Change to desired disabled background color
-              color: '#1C1C1C', // Change to desired disabled text color
-              border: '1px solid #757575' // Change to desired disabled border color
-            }
-          }}
-        >
-          Back
-        </Button>
 
+      <Box sx={{ display: 'flex', width: '220px', justifyContent: 'space-between', marginTop: '20px' }}>
+        {activeStep !== 0 && (
+          <Button
+            variant="outlined"
+            onClick={handleBack}
+            sx={{
+              textTransform: 'none',
+              fontWeight: 'regular',
+              padding: '10px 35px',
+              border: '1px solid #1C1C1C',
+              marginY: '9px',
+              color: '#1C1C1C',
+              '&:hover':{
+                backgroundColor: '#1C1C1C',
+                color: '#ffffff'
+              },
+              '&.Mui-disabled': {
+                backgroundColor: '#ffffff', // Change to desired disabled background color
+                color: '#1C1C1C', // Change to desired disabled text color
+                border: '1px solid #757575' // Change to desired disabled border color
+              }
+            }}
+          >
+            Back
+          </Button>
+        )}
+
+
+      {activeStep !== 4 && (
         <Button
           variant="contained"
           onClick={handleNext}
           disabled={activeStep === steps.length - 1}
           sx={{
-            textTransform:'none',
-            fontWeight:'regular',
+            textTransform: 'none',
+            fontWeight: 'regular',
             padding: '10px 35px',
-            backgroundColor:'#1C1C1C',
+            backgroundColor: '#1C1C1C',
             border: '1px solid #1C1C1C',
             marginY: '9px',
-            color:'#ffffff',
+            color: '#ffffff',
             '&.Mui-disabled': {
               backgroundColor: '#ffffff', // Change to desired disabled background color
               color: '#1C1C1C', // Change to desired disabled text color
@@ -417,8 +420,8 @@ const StepperComponent: React.FC<StepperComponentProps> = ({
         >
           Next
         </Button>
+      )}
       </Box>
-
     </Box>
   );
 };

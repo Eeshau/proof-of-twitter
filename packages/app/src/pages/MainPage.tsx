@@ -33,11 +33,15 @@ import { formatDateTime } from "../helpers/dateTimeFormat";
 import EmailInputMethod from "../components/EmailInputMethod";
 import { Box, Grid, Typography } from "@mui/material";
 import Stepper from '../components/Stepper'
-
+import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward';
+import Video from "../components/Video";
+import Nav from "../components/Nav";
+import {useTheme} from "@mui/material";
 
 const CIRCUIT_NAME = "twitter";
 
 export const MainPage: React.FC<{}> = (props) => {
+  
   const { address } = useAccount();
 
   const {
@@ -271,12 +275,14 @@ export const MainPage: React.FC<{}> = (props) => {
 
   const [activeStep, setActiveStep] = useState<number>(0);
 
+  const theme = useTheme()
 
   return (
-    <Grid container>
+    <Grid container >
 
-    <Grid item xs={12} md={6} sx={{backgroundColor:'#FFFFFF', padding:'20px', color:'#000000', minHeight:'650px'}}>
-
+    <Grid item xs={12} md={6}>
+    <Nav />
+      <Box sx={{backgroundColor:'#FFFFFF', padding:'20px', color:'#000000', minHeight:'650px', paddingX:'60px'}} >
         <Stepper
           steps={steps}
           activeStep={activeStep}
@@ -286,7 +292,7 @@ export const MainPage: React.FC<{}> = (props) => {
 
 
         {activeStep ==0 && (
-          <Box sx={{marginTop:'80px', marginBottom: '40px'}}>
+          <Box sx={{marginTop:'100px', marginBottom: '40px'}}>
             <Typography variant='h1' sx={{marginBottom:'20px'}}>SEND TWITTER PASSWORD RESET EMAIL</Typography>
             <Typography>Send yourself a password reset email from Twitter. <br></br>(Reminder: Twitter name with emoji might fail to pass DKIM verification)</Typography>
           </Box>
@@ -295,7 +301,7 @@ export const MainPage: React.FC<{}> = (props) => {
 
         {activeStep ==1 && (
         <Box>
-          <Box sx={{marginTop:'80px', marginBottom: '40px'}}>
+          <Box sx={{marginTop:'100px', marginBottom: '40px'}}>
             <Typography variant='h1' sx={{marginBottom:'20px'}}>COPY & PASTE THE EMAIL DKIM SIG</Typography>
             <Typography>In your inbox, find the email from Twitter and click the three dot menu, then "Show original" then "Copy to clipboard". If on Outlook, download the original email as .eml and copy it instead. Copy paste or drop that into the box below. Note that we cannot use this to phish you: we do not know your password, and we never get this email info because we have no server at all. We are actively searching for a less sketchy email.</Typography>
           </Box>
@@ -338,28 +344,35 @@ export const MainPage: React.FC<{}> = (props) => {
               {isFetchEmailLoading ? (
                 <div className="loader" />
               ) : (
-                fetchedEmails.map((email, index) => (
-                  <div
-                    style={{
-                      borderBottom: "1px solid white",
-                      width: "100%",
-                      padding: "0 1rem",
-                      display: "flex",
-                      justifyContent: "space-between",
-                      color:
-                        email.decodedContents === emailFull
-                          ? "#8272e4"
-                          : "white",
-                      borderTop: index === 0 ? "1px solid white" : "none", // Conditional border top
-                    }}
-                    onClick={() => {
-                      setEmailFull(email.decodedContents);
-                    }}
-                  >
-                    <p>{email.subject}</p>
-                    <p>{formatDateTime(email.internalDate)}</p>
-                  </div>
-                ))
+                <>
+                  <Typography variant="h6" sx={{ marginBottom: '1rem' }}>
+                    Select any twitter email, then proceed
+                  </Typography>
+                  {fetchedEmails.map((email, index) => (
+                    <div
+                      key={email.id}
+                      style={{
+                        borderBottom: "1px solid lightgrey",
+                        width: "100%",
+                        padding: "0 1rem",
+                        display: "flex",
+                        justifyContent: "space-between",
+                        cursor: 'pointer',
+                        color:
+                          email.decodedContents === emailFull
+                            ? theme.palette.accent.main
+                            : theme.palette.secondary.main,
+                        borderTop: index === 0 ? "1px solid white" : "none", // Conditional border top
+                      }}
+                      onClick={() => {
+                        setEmailFull(email.decodedContents);
+                      }}
+                    >
+                      <p>{email.subject}</p>
+                      <p>{formatDateTime(email.internalDate)}</p>
+                    </div>
+                  ))}
+                </>
               )}
             </div>
           ) : null}
@@ -419,7 +432,7 @@ export const MainPage: React.FC<{}> = (props) => {
 
         {activeStep ==2 && (
           <Box>
-            <Box sx={{marginTop:'80px', marginBottom: '40px'}}>
+            <Box sx={{marginTop:'100px', marginBottom: '40px'}}>
               <Typography variant='h1' sx={{marginBottom:'20px'}}>ADD ETHEREUM ADDRESS TO SECURE PROOF</Typography>
               <Typography>Paste in your sending Ethereum address. This ensures that no one else can "steal" your proof for another account (frontrunning protection!). Click "Prove". Note it is completely client side and open source, and no server ever sees your private information.</Typography>
             </Box>
@@ -443,11 +456,11 @@ export const MainPage: React.FC<{}> = (props) => {
                   }}
                 />
               )}
-              {inputMethod ? (
+              {/* {inputMethod ? (
                 <TextButton onClick={() => setInputMethod(null)}>
                   ←{"  "}Go Back
                 </TextButton>
-              ) : null}
+              ) : null} */}
               {inputMethod === "GOOGLE" ? (
                 <div
                   style={{
@@ -461,34 +474,43 @@ export const MainPage: React.FC<{}> = (props) => {
                   {isFetchEmailLoading ? (
                     <div className="loader" />
                   ) : (
-                    fetchedEmails.map((email, index) => (
-                      <div
-                        style={{
-                          borderBottom: "1px solid white",
-                          width: "100%",
-                          padding: "0 1rem",
-                          display: "flex",
-                          justifyContent: "space-between",
-                          color:
-                            email.decodedContents === emailFull
-                              ? "#8272e4"
-                              : "white",
-                          borderTop: index === 0 ? "1px solid white" : "none", // Conditional border top
-                        }}
-                        onClick={() => {
-                          setEmailFull(email.decodedContents);
-                        }}
-                      >
-                        <p>{email.subject}</p>
-                        <p>{formatDateTime(email.internalDate)}</p>
-                      </div>
-                    ))
-                  )}
-                </div>
+                  <>
+                    <Typography variant="h6" sx={{ marginBottom: '1rem' }}>
+                      Highlighted Twitter email will be used 
+                    </Typography>
+                    <div style={{ pointerEvents: 'none' }}>
+                      {fetchedEmails.map((email, index) => (
+                        <div
+                          key={email.id}
+                          style={{
+                            borderBottom: "1px solid lightgrey",
+                            width: "100%",
+                            padding: "0 1rem",
+                            display: "flex",
+                            justifyContent: "space-between",
+                            cursor: 'pointer',
+                            color:
+                              email.decodedContents === emailFull
+                                ? 'black'
+                                : theme.palette.secondary.main,
+                            borderTop: index === 0 ? "1px solid white" : "none", // Conditional border top
+                          }}
+                          onClick={() => {
+                            setEmailFull(email.decodedContents);
+                          }}
+                        >
+                          <p>{email.subject}</p>
+                          <p>{formatDateTime(email.internalDate)}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                )}
+              </div>
               ) : null}
               {inputMethod === "EML_FILE" || !import.meta.env.VITE_GOOGLE_CLIENT_ID ? (
                 <>
-                  {" "}
+                  {/* {" "}
                   <DragAndDropTextBox onFileDrop={onFileDrop} />
                   <h3
                     style={{
@@ -498,8 +520,9 @@ export const MainPage: React.FC<{}> = (props) => {
                     }}
                   >
                     OR
-                  </h3>
+                  </h3> */}
                   <LabeledTextArea
+                    disabled={true}
                     label="Full Email with Headers"
                     value={emailFull}
                     onChange={(e) => {
@@ -547,7 +570,7 @@ export const MainPage: React.FC<{}> = (props) => {
 
         {activeStep ==3 && (
         <Box>
-          <Box sx={{marginTop:'80px', marginBottom: '40px'}}>
+          <Box sx={{marginTop:'100px', marginBottom: '40px'}}>
             <Typography variant='h1' sx={{marginBottom:'20px'}}>GENERATE PROOF USING INPUTS</Typography>
             <Typography>Click "Prove". Note it is completely client side and open source, and no server ever sees your private information.</Typography>
           </Box>
@@ -556,6 +579,7 @@ export const MainPage: React.FC<{}> = (props) => {
           <SubHeader>Input</SubHeader>
           {inputMethod || !import.meta.env.VITE_GOOGLE_CLIENT_ID ? null : (
             <EmailInputMethod
+              disabled={true}
               onClickGoogle={() => {
                 try {
                   setIsFetchEmailLoading(true);
@@ -571,11 +595,11 @@ export const MainPage: React.FC<{}> = (props) => {
               }}
             />
           )}
-          {inputMethod ? (
+          {/* {inputMethod ? (
             <TextButton onClick={() => setInputMethod(null)}>
               ←{"  "}Go Back
             </TextButton>
-          ) : null}
+          ) : null} */}
           {inputMethod === "GOOGLE" ? (
             <div
               style={{
@@ -589,35 +613,44 @@ export const MainPage: React.FC<{}> = (props) => {
               {isFetchEmailLoading ? (
                 <div className="loader" />
               ) : (
-                fetchedEmails.map((email, index) => (
-                  <div
-                    style={{
-                      borderBottom: "1px solid white",
-                      width: "100%",
-                      padding: "0 1rem",
-                      display: "flex",
-                      justifyContent: "space-between",
-                      color:
-                        email.decodedContents === emailFull
-                          ? "#8272e4"
-                          : "white",
-                      borderTop: index === 0 ? "1px solid white" : "none", // Conditional border top
-                    }}
-                    onClick={() => {
-                      setEmailFull(email.decodedContents);
-                    }}
-                  >
-                    <p>{email.subject}</p>
-                    <p>{formatDateTime(email.internalDate)}</p>
-                  </div>
-                ))
+                <>
+                <Typography variant="h6" sx={{ marginBottom: '1rem' }}>
+                  Highlighted Twitter email will be used 
+                </Typography>
+                <div style={{ pointerEvents: 'none' }}>
+                  {fetchedEmails.map((email, index) => (
+                    <div
+                      key={email.id}
+                      style={{
+                        borderBottom: "1px solid lightgrey",
+                        width: "100%",
+                        padding: "0 1rem",
+                        display: "flex",
+                        justifyContent: "space-between",
+                        cursor: 'pointer',
+                        color:
+                          email.decodedContents === emailFull
+                            ? 'black'
+                            : theme.palette.secondary.main,
+                        borderTop: index === 0 ? "1px solid white" : "none", // Conditional border top
+                      }}
+                      onClick={() => {
+                        setEmailFull(email.decodedContents);
+                      }}
+                    >
+                      <p>{email.subject}</p>
+                      <p>{formatDateTime(email.internalDate)}</p>
+                    </div>
+                  ))}
+                </div>
+              </>
               )}
             </div>
           ) : null}
           {inputMethod === "EML_FILE" || !import.meta.env.VITE_GOOGLE_CLIENT_ID ? (
             <>
-              {" "}
-              <DragAndDropTextBox onFileDrop={onFileDrop} />
+              {/* {" "}
+              <DragAndDropTextBox onFileDrop={onFileDrop}/>
               <h3
                 style={{
                   textAlign: "center",
@@ -626,8 +659,9 @@ export const MainPage: React.FC<{}> = (props) => {
                 }}
               >
                 OR
-              </h3>
+              </h3> */}
               <LabeledTextArea
+                disabled={true}
                 label="Full Email with Headers"
                 value={emailFull}
                 onChange={(e) => {
@@ -637,6 +671,7 @@ export const MainPage: React.FC<{}> = (props) => {
             </>
           ) : null}
           <SingleLineInput
+            disabled={true}
             label="Ethereum Address"
             value={ethereumAddress}
             onChange={(e) => {
@@ -742,7 +777,8 @@ export const MainPage: React.FC<{}> = (props) => {
             <TimerDisplay timers={stopwatch} />
           </ProcessStatus>
           </Column>
-          </Box>          
+          </Box>   
+                 
         )}
 
 
@@ -752,7 +788,7 @@ export const MainPage: React.FC<{}> = (props) => {
 
         {activeStep ==4 && (
           <Box>
-            <Box sx={{marginTop:'80px', marginBottom: '40px'}}>
+            <Box sx={{marginTop:'100px', marginBottom: '40px'}}>
               <Typography variant='h1' sx={{marginBottom:'20px'}}>VERIFY & MINT ON CHAIN TWITTER BADGE</Typography>
               <Typography>Click "Verify" and then "Mint Twitter Badge On-Chain", and approve to mint the NFT badge that proves Twitter ownership! Note that it is 700K gas right now so only feasible on Sepolia, though we intend to reduce this soon.</Typography>
             </Box>
@@ -808,42 +844,49 @@ export const MainPage: React.FC<{}> = (props) => {
                 Verify
               </Button>
               <Button
-                highlighted={verificationMessage=='Passed!'}
-                disabled={!verificationPassed || isLoading || isSuccess || !write}
+                highlighted={verificationMessage === 'Passed!' || isSuccess}
+                disabled={!verificationPassed || isLoading || !write}
                 onClick={async () => {
-                  setStatus("sending-on-chain");
-                  write?.();
+                  if (isSuccess) {
+                    window.open(`https://sepolia.etherscan.io/tx/${data?.hash}`, "_blank");
+                  } else {
+                    setStatus("sending-on-chain");
+                    write?.();
+                  }
                 }}
+                endIcon={isSuccess ? <ArrowOutwardIcon /> : null}
               >
-                {isSuccess
-                  ? "Successfully sent to chain!"
-                  : isLoading
-                  ? "Confirm in wallet"
-                  : !write
-                  ? "Connect Wallet first, scroll to top!"
-                  : verificationPassed
-                  ? "Mint Twitter badge on-chain"
-                  : "Verify first, before minting on-chain!"}
+                {isSuccess ? (
+                  <>
+                    SUCCESSFULLY SENT ON CHAIN
+                    {/* <br />
+                    {data?.hash} */}
+                  </>
+                ) : isLoading ? (
+                  "Confirm in wallet"
+                ) : !write ? (
+                  "Connect Wallet first, scroll to top!"
+                ) : verificationPassed ? (
+                  "Mint Twitter badge on-chain"
+                ) : (
+                  "Verify first, before minting on-chain!"
+                )}
+
+                
               </Button>
-              {isSuccess && (
-                <div>
-                  Transaction:{" "}
-                  <a href={"https://sepolia.etherscan.io/tx/" + data?.hash}>
-                    {data?.hash}
-                  </a>
-                </div>
-              )}
+
             </Column>
           </Box>
         )}
         </Stepper>
+      </Box>
       </Grid>
 
 
 
 
 
-      <Grid item xs={12} md={6} sx={{backgroundColor:'#000000' }}>
+      <Grid item xs={12} md={6} sx={{backgroundColor:'#C3C3C3' }}>
         <Typography  sx={{color:'#ffffff'}}>HERE IS WHERE WE WILL PUT THE INSTRUCTION STEP VIDEO ON THE RIGHT SIDE </Typography>
         
         {activeStep ==0 && (
@@ -861,6 +904,7 @@ export const MainPage: React.FC<{}> = (props) => {
         {activeStep ==4 && (
             <Typography sx={{color:'#ffffff'}}>video for step 4</Typography>
         )}
+        <Video/>
       </Grid>
 
     </Grid>
@@ -935,10 +979,10 @@ const Column = styled(Col)`
   width: fit;
   gap: 1rem;
   align-self: flex-start;
-  background: #FCFCFC;
-  padding: 1rem;
+  background: #FFFFFC;
+  padding: 2rem;
   border-radius: 10px;
-  border: 1px solid #7E7E7E;
+  border: 1px solid #C7C7C7;
 `;
 
 // const Container = styled.div`

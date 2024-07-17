@@ -11,8 +11,11 @@ const theme = createTheme({
       main: '#8E8E8E',
     },
     accent: {
-      main: '#FF4081', // Choose your accent color here
+      main: '#8372E4', //  accent color 
     },
+    active: {
+      main: '#abbeff'  // active non accent color 
+    }
   },
 
   typography: {

@@ -8,9 +8,7 @@ import {
 } from "react-router-dom";
 import { useLocation } from "react-use";
 import styled from "styled-components";
-
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import Nav from './components/Nav'
 
 
 const App = () => {
@@ -18,7 +16,6 @@ const App = () => {
   return (
     <Router>
       <div>
-        <Nav/>
 
         <Routes>
           <Route path="/" element={<MainPage />} />

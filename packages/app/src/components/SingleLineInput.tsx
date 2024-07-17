@@ -7,13 +7,15 @@ interface SingleLineInputProps {
   value: any;
   onChange: (e: any) => void;
   highlighted?: boolean;
+  disabled?: boolean; // Optional disabled prop
 }
 
 export const SingleLineInput: React.FC<SingleLineInputProps> = ({
   label,
   onChange,
   value,
-  highlighted = false
+  highlighted = false,
+  disabled = false, // Default value set to false
 }) => {
   
   const theme = useTheme();
@@ -39,27 +41,38 @@ export const SingleLineInput: React.FC<SingleLineInputProps> = ({
         placeholder={label}
         variant="outlined"
         fullWidth
+        disabled={disabled} // Apply the disabled prop to the TextField
         InputProps={{
           style: {
             color: theme.palette.secondary.main,
-            background: "#F9F9F9",
+            background: "#F3F2F2",
             borderRadius: "10px",
-            border: '1px solid #73767B'
+            border: 'none',
+            outline: 'none',
+            pointerEvents: disabled ? 'none' : 'auto', // Ensure it's non-clickable
           },
         }}
         sx={{
           "& .MuiOutlinedInput-root": {
             "& fieldset": {
-              borderColor: highlighted ? theme.palette.accent.main : "rgba(255, 255, 255, 0.4)",
+              borderColor: highlighted ? theme.palette.accent.main : "#1C1C1C",
               borderWidth: highlighted ? '2px' : '1px',
+              borderStyle: highlighted ? 'solid' : "none",
             },
             "&:hover fieldset": {
-              borderColor: highlighted ? theme.palette.accent.main : "#F9F9F9",
+              borderColor: highlighted ? theme.palette.accent.main : "#1C1C1C",
+              borderWidth: '2px',
+              borderStyle: highlighted ? 'solid' : "none",
             },
             "&.Mui-focused fieldset": {
-              borderColor: theme.palette.accent.main,
+              borderColor: highlighted ? theme.palette.accent.main : "#1C1C1C",
+              borderWidth: '2px',
+              borderStyle: 'solid'
             },
             transition: "all 0.2s ease-in-out",
+          },
+          "& .MuiOutlinedInput-notchedOutline": {
+            border: 'none',
           },
         }}
       />

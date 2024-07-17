@@ -1,6 +1,6 @@
 // import _ from "lodash";
 // import React, { CSSProperties } from "react";
-// import styled from "styled-components";
+// import styled, { ThemeProvider, css } from "styled-components";
 // import { Col } from "./Layout";
 // import { Box, Typography, useTheme } from "@mui/material";
 
@@ -15,6 +15,7 @@
 //   disabledReason?: string;
 //   secret?: boolean;
 //   onChange?: React.ChangeEventHandler<HTMLTextAreaElement>;
+//   highlighted?: boolean;
 // }> = ({
 //   style,
 //   warning,
@@ -26,40 +27,42 @@
 //   onChange,
 //   className,
 //   secret,
+//   highlighted = false,
 // }) => {
 
-
-//   const theme = useTheme()
+//   const theme = useTheme();
 
 //   return (
-//     <LabeledTextAreaContainer
-//       className={_.compact(["labeledTextAreaContainer", className]).join(" ")}
-//     >
-//       <Typography sx={{color:theme.palette.secondary.main}}>{label}</Typography>
-     
-//      {warning && (
-//         <Box className="warning" minWidth='100px' maxWidth='150px' sx={{ color: "white", padding: '10px', borderRadius:'5px', backgroundColor: warningColor, textAlign:'center' }}>
-//           {warning}
-//         </Box>
-//       )}
-      
-//       <TextArea
-//         style={style}
-//         aria-label={label} 
-//         title={disabled ? disabledReason : ""}
-//         disabled={disabled}
-//         value={value}
-//         onChange={onChange}
-//       />
+//     <ThemeProvider theme={theme}>
+//       <LabeledTextAreaContainer
+//         className={_.compact(["labeledTextAreaContainer", className]).join(" ")}
+//       >
+//         <Typography sx={{ color: theme.palette.secondary.main }}>{label}</Typography>
 
-//       {secret && (
-//         <div className="secret">Hover to reveal public info sent to chain</div>
-//       )}
-//     </LabeledTextAreaContainer>
+//         {warning && (
+//           <Box className="warning" minWidth='100px' maxWidth='150px' sx={{ color: "white", padding: '10px', borderRadius: '20px', backgroundColor: warningColor, textAlign: 'center' }}>
+//             {warning}
+//           </Box>
+//         )}
+
+//         <TextArea
+//           style={style}
+//           aria-label={label}
+//           title={disabled ? disabledReason : ""}
+//           disabled={disabled}
+//           value={value}
+//           onChange={onChange}
+//           highlighted={highlighted}
+//           theme={theme}
+//         />
+
+//         {secret && (
+//           <div className="secret">Hover to reveal public info sent to chain</div>
+//         )}
+//       </LabeledTextAreaContainer>
+//     </ThemeProvider>
 //   );
 // };
-
-
 
 // const LabeledTextAreaContainer = styled(Col)`
 //   height: 15vh;
@@ -90,17 +93,38 @@
 //   }
 // `;
 
-// const TextArea = styled.textarea`
-//   border: 1px solid rgba(255, 255, 255, 0.3);
-//   background: rgba(0, 0, 0, 0.3);
-//   border-radius: 4px;
+// const TextArea = styled.textarea<{ highlighted: boolean }>`
+//   border: 0px solid #1C1C1C;
+//   background: #F3F2F2;
+//   border-radius: 10px;
+//   color: grey;
 //   height: 480px;
-// 	padding: 16px;
-// 	transition: all 0.2s ease-in-out;
-// 	resize: none;
-//   &:hover {
-// 		border: 1px solid rgba(255, 255, 255, 0.8);
+//   padding: 16px;
+//   transition: all 0.2s ease-in-out;
+//   resize: none;
+//   outline: none;
+
+//   ${({ highlighted, theme }) =>
+//     highlighted
+//       ? css`
+//           border: 2px solid ${theme.palette.accent.main};
+//           &:hover {
+//             border: 2px solid ${theme.palette.accent.main};
+//           }
+//           &:focus {
+//             border: 1px solid ${theme.palette.accent.main};
+//             box-shadow: 0 0 0 2px ${theme.palette.accent.main};
+//           }
+//         `
+//       : css`
+//           &:focus {
+//             border: 2px solid #1C1C1C;
+//           }
+//         `}
 // `;
+
+// export default LabeledTextArea;
+
 
 
 import _ from "lodash";
@@ -125,7 +149,7 @@ export const LabeledTextArea: React.FC<{
   style,
   warning,
   warningColor,
-  disabled,
+  disabled = false, // Default value set to false
   disabledReason,
   label,
   value,
@@ -145,7 +169,7 @@ export const LabeledTextArea: React.FC<{
         <Typography sx={{ color: theme.palette.secondary.main }}>{label}</Typography>
 
         {warning && (
-          <Box className="warning" minWidth='100px' maxWidth='150px' sx={{ color: "white", padding: '10px', borderRadius: '5px', backgroundColor: warningColor, textAlign: 'center' }}>
+          <Box className="warning" minWidth='100px' maxWidth='150px' sx={{ color: "white", padding: '10px', borderRadius: '20px', backgroundColor: warningColor, textAlign: 'center' }}>
             {warning}
           </Box>
         )}
@@ -199,10 +223,10 @@ const LabeledTextAreaContainer = styled(Col)`
 `;
 
 const TextArea = styled.textarea<{ highlighted: boolean }>`
-  border: 1px solid #73767B;
-  background: #F9F9F9;
+  border: 0px solid #1C1C1C;
+  background: #F3F2F2;
   border-radius: 10px;
-  color: grey;
+  color: ${({ theme }) => theme.palette.secondary.main};
   height: 480px;
   padding: 16px;
   transition: all 0.2s ease-in-out;
@@ -217,17 +241,13 @@ const TextArea = styled.textarea<{ highlighted: boolean }>`
             border: 2px solid ${theme.palette.accent.main};
           }
           &:focus {
-            border: 2px solid ${theme.palette.accent.main};
+            border: 1px solid ${theme.palette.accent.main};
             box-shadow: 0 0 0 2px ${theme.palette.accent.main};
           }
         `
       : css`
-          &:hover {
-            border: 1px solid #73767B;
-          }
           &:focus {
-            border: 2px solid black;
-            box-shadow: 0 0 0 2px black;
+            border: 2px solid #1C1C1C;
           }
         `}
 `;
