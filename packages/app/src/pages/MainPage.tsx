@@ -439,7 +439,7 @@ export const MainPage: React.FC<{}> = (props) => {
 
             <Column>
               <SubHeader>Input</SubHeader>
-              {inputMethod || !import.meta.env.VITE_GOOGLE_CLIENT_ID ? null : (
+              {/* {inputMethod || !import.meta.env.VITE_GOOGLE_CLIENT_ID ? null : (
                 <EmailInputMethod
                   onClickGoogle={() => {
                     try {
@@ -456,7 +456,7 @@ export const MainPage: React.FC<{}> = (props) => {
                   }}
                 />
               )}
-              {/* {inputMethod ? (
+              {inputMethod ? (
                 <TextButton onClick={() => setInputMethod(null)}>
                   ←{"  "}Go Back
                 </TextButton>

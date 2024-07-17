@@ -110,7 +110,7 @@ const StyledButton = styled(MuiButton)<{ highlighted: boolean }>`
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
-    color: ${({ highlighted, theme }) => (highlighted ? '#C9215A' : 'grey')};
+    color: ${({ highlighted, theme }) => (highlighted ? '#ffffff' : 'grey')};
   }
 `;
 
