@@ -93,7 +93,7 @@ const CustomConnectButton = () => {
                     }}
                   >
                     <img
-                      src={account.ensAvatar || 'https://via.placeholder.com/24'}
+                      src={account.ensAvatar || 'https://i.pinimg.com/736x/da/54/e0/da54e029e0aa4f1df03f45e9feedb8b9.jpg'}  //temporary change this later
                       alt="Avatar"
                       width="24"
                       height="24"

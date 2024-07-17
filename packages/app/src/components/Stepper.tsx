@@ -291,13 +291,314 @@
 
 
 
+
+
+
+
+
+
+// import React, { ReactNode } from 'react';
+// import { Box, Typography, Button } from '@mui/material';
+// import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+
+// interface StepperComponentProps {
+//   children: ReactNode;
+//   steps: string[];
+//   activeStep: number;
+//   setActiveStep: (step: number) => void;
+// }
+
+// const StepperComponent: React.FC<StepperComponentProps> = ({
+//   children,
+//   steps,
+//   activeStep,
+//   setActiveStep
+// }) => {
+//   const handleStep = (step: number) => () => {
+//     setActiveStep(step);
+//   };
+
+//   const handleNext = () => {
+//     setActiveStep((prevActiveStep) => prevActiveStep + 1);
+//   };
+
+//   const handleBack = () => {
+//     setActiveStep((prevActiveStep) => prevActiveStep - 1);
+//   };
+
+//   return (
+//     <Box sx={{ width: '100%', position: 'relative', marginY: '50px' }}>
+//       <Box />
+//       {/* Light grey bar */}
+//       <Box
+//         sx={{
+//           display: 'flex',
+//           alignItems: 'center',
+//           position: 'relative',
+//           zIndex: 2,
+//           borderBottom: '1px solid #e0e0e0',
+//         }}
+//       >
+//         {steps.map((label, index) => (
+//           <React.Fragment key={label}>
+//             <Box
+//               onClick={handleStep(index)}
+//               sx={{
+//                 cursor: 'pointer',
+//                 display: 'flex',
+//                 alignItems: 'center',
+//                 position: 'relative',
+//                 padding: '0 10px',
+//               }}
+//             >
+//               <Typography
+//                 variant="body1"
+//                 component="span"
+//                 sx={{
+//                   fontWeight: activeStep === index ? 'bold' : 'regular',
+//                   color: activeStep === index ? 'black' : 'gray',
+//                   borderBottom: activeStep === index ? '2px solid black' : 'none',
+//                   paddingBottom: '2px',
+//                   fontSize: { xs: '9px', sm: '10px', md: '11px', lg: '12px' }
+//                 }}
+//               >
+//                 {label}
+//               </Typography>
+//             </Box>
+//             {index < steps.length - 1 && (
+//               <ArrowForwardIosIcon sx={{ fontSize: 12, verticalAlign: 'middle', color: 'gray' }} />
+//             )}
+//           </React.Fragment>
+//         ))}
+//       </Box>
+
+//       <Box sx={{ marginTop: '20px' }}>
+//         {children}
+//       </Box>
+
+//       <Box sx={{ display: 'flex', width: '220px', justifyContent: 'space-between', marginTop: '20px' }}>
+//         {activeStep !== 0 && (
+//           <Button
+//             variant="outlined"
+//             onClick={handleBack}
+//             sx={{
+//               textTransform: 'none',
+//               fontWeight: 'regular',
+//               padding: '10px 35px',
+//               border: '1px solid #1C1C1C',
+//               marginY: '9px',
+//               color: '#1C1C1C',
+//               '&:hover':{
+//                 backgroundColor: '#1C1C1C',
+//                 color: '#ffffff'
+//               },
+//               '&.Mui-disabled': {
+//                 backgroundColor: '#ffffff', // Change to desired disabled background color
+//                 color: '#1C1C1C', // Change to desired disabled text color
+//                 border: '1px solid #757575' // Change to desired disabled border color
+//               }
+//             }}
+//           >
+//             Back
+//           </Button>
+//         )}
+
+
+//       {activeStep !== 4 && (
+//         <Button
+//           variant="contained"
+//           onClick={handleNext}
+//           disabled={activeStep === steps.length - 1}
+//           sx={{
+//             textTransform: 'none',
+//             fontWeight: 'regular',
+//             padding: '10px 35px',
+//             backgroundColor: '#1C1C1C',
+//             border: '1px solid #1C1C1C',
+//             marginY: '9px',
+//             color: '#ffffff',
+//             '&.Mui-disabled': {
+//               backgroundColor: '#ffffff', // Change to desired disabled background color
+//               color: '#1C1C1C', // Change to desired disabled text color
+//               border: '1px solid #757575', // Change to desired disabled border color
+//             }
+//           }}
+//         >
+//           Next
+//         </Button>
+//       )}
+//       </Box>
+//     </Box>
+//   );
+// };
+
+// export default StepperComponent;
+
+
+
+
+
+
+// import React, { useState, ReactNode } from 'react';
+// import { Box, Typography, Button } from '@mui/material';
+// import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+
+// interface StepperComponentProps {
+//   children: ReactNode;
+//   steps: string[];
+//   activeStep: number;
+//   setActiveStep: (step: number) => void;
+// }
+
+// const StepperComponent: React.FC<StepperComponentProps> = ({
+//   children,
+//   steps,
+//   activeStep,
+//   setActiveStep
+// }) => {
+//   const [completedSteps, setCompletedSteps] = useState<boolean[]>(new Array(steps.length).fill(false));
+
+//   const handleStep = (step: number) => () => {
+//     if (step <= activeStep || completedSteps[step - 1]) {
+//       setActiveStep(step);
+//     }
+//   };
+
+//   const handleNext = () => {
+//     if (activeStep < steps.length - 1 && completedSteps.slice(0, activeStep).every(completed => completed)) {
+//       setCompletedSteps((prevCompletedSteps) => {
+//         const newCompletedSteps = [...prevCompletedSteps];
+//         newCompletedSteps[activeStep] = true;
+//         return newCompletedSteps;
+//       });
+//       setActiveStep((prevActiveStep) => prevActiveStep + 1);
+//     }
+//   };
+
+//   const handleBack = () => {
+//     setActiveStep((prevActiveStep) => prevActiveStep - 1);
+//   };
+
+//   return (
+//     <Box sx={{ width: '100%', position: 'relative', marginY: '50px' }}>
+//       <Box />
+//       {/* Light grey bar */}
+//       <Box
+//         sx={{
+//           display: 'flex',
+//           alignItems: 'center',
+//           position: 'relative',
+//           zIndex: 2,
+//           borderBottom: '1px solid #e0e0e0',
+//         }}
+//       >
+//         {steps.map((label, index) => {
+//           const isStepDisabled = !(index <= activeStep || completedSteps[index - 1]);
+//           return (
+//             <React.Fragment key={label}>
+//               <Box
+//                 onClick={handleStep(index)}
+//                 sx={{
+//                   cursor: isStepDisabled ? 'not-allowed' : 'pointer',
+//                   display: 'flex',
+//                   alignItems: 'center',
+//                   position: 'relative',
+//                   padding: '0 10px',
+//                 }}
+//               >
+//                 <Typography
+//                   variant="body1"
+//                   component="span"
+//                   sx={{
+//                     fontWeight: activeStep === index ? 'bold' : 'regular',
+//                     color: activeStep === index ? 'black' : 'gray',
+//                     borderBottom: activeStep === index ? '2px solid black' : 'none',
+//                     paddingBottom: '2px',
+//                     fontSize: { xs: '9px', sm: '10px', md: '11px', lg: '12px' }
+//                   }}
+//                 >
+//                   {label}
+//                 </Typography>
+//               </Box>
+//               {index < steps.length - 1 && (
+//                 <ArrowForwardIosIcon sx={{ fontSize: 12, verticalAlign: 'middle', color: 'gray' }} />
+//               )}
+//             </React.Fragment>
+//           );
+//         })}
+//       </Box>
+
+//       <Box sx={{ marginTop: '20px' }}>
+//         {children}
+//       </Box>
+
+//       <Box sx={{ display: 'flex', width: '220px', justifyContent: 'space-between', marginTop: '20px' }}>
+//         {activeStep !== 0 && (
+//           <Button
+//             variant="outlined"
+//             onClick={handleBack}
+//             sx={{
+//               textTransform: 'none',
+//               fontWeight: 'regular',
+//               padding: '10px 35px',
+//               border: '1px solid #1C1C1C',
+//               marginY: '9px',
+//               color: '#1C1C1C',
+//               '&:hover':{
+//                 backgroundColor: '#1C1C1C',
+//                 color: '#ffffff'
+//               },
+//               '&.Mui-disabled': {
+//                 backgroundColor: '#ffffff', // Change to desired disabled background color
+//                 color: '#1C1C1C', // Change to desired disabled text color
+//                 border: '1px solid #757575' // Change to desired disabled border color
+//               }
+//             }}
+//           >
+//             Back
+//           </Button>
+//         )}
+
+
+//       {activeStep !== steps.length - 1 && (
+//         <Button
+//           variant="contained"
+//           onClick={handleNext}
+//           disabled={!completedSteps.slice(0, activeStep).every(completed => completed)}
+//           sx={{
+//             textTransform: 'none',
+//             fontWeight: 'regular',
+//             padding: '10px 35px',
+//             backgroundColor: '#1C1C1C',
+//             border: '1px solid #1C1C1C',
+//             marginY: '9px',
+//             color: '#ffffff',
+//             '&.Mui-disabled': {
+//               backgroundColor: '#ffffff', // Change to desired disabled background color
+//               color: '#1C1C1C', // Change to desired disabled text color
+//               border: '1px solid #757575', // Change to desired disabled border color
+//             }
+//           }}
+//         >
+//           Next
+//         </Button>
+//       )}
+//       </Box>
+//     </Box>
+//   );
+// };
+
+// export default StepperComponent;
+
+
+
 import React, { ReactNode } from 'react';
 import { Box, Typography, Button } from '@mui/material';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
 interface StepperComponentProps {
   children: ReactNode;
-  steps: string[];
+  steps: [string, 'completed' | 'uncompleted'][];
   activeStep: number;
   setActiveStep: (step: number) => void;
 }
@@ -308,17 +609,33 @@ const StepperComponent: React.FC<StepperComponentProps> = ({
   activeStep,
   setActiveStep
 }) => {
+
+
+  // marks current step as completed only if previous steps are completed
   const handleStep = (step: number) => () => {
-    setActiveStep(step);
+    if (step <= activeStep || steps[step - 1][1] === 'completed') {
+      setActiveStep(step);
+    }
   };
 
+
+  // checks that the current active step is completed and if all the previous steps are completed before letting us go to the next step
   const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    if (
+      activeStep < steps.length - 1 &&
+      steps.slice(0, activeStep + 1).every(step => step[1] === 'completed')
+    ) {
+      setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    }
   };
 
+  
+  // just sets active step to the previous last step
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
+
+
 
   return (
     <Box sx={{ width: '100%', position: 'relative', marginY: '50px' }}>
@@ -333,37 +650,40 @@ const StepperComponent: React.FC<StepperComponentProps> = ({
           borderBottom: '1px solid #e0e0e0',
         }}
       >
-        {steps.map((label, index) => (
-          <React.Fragment key={label}>
-            <Box
-              onClick={handleStep(index)}
-              sx={{
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                position: 'relative',
-                padding: '0 10px',
-              }}
-            >
-              <Typography
-                variant="body1"
-                component="span"
+        {steps.map((step, index) => {
+          const isStepDisabled = !(index <= activeStep || steps[index - 1][1] === 'completed');
+          return (
+            <React.Fragment key={step[0]}>
+              <Box
+                onClick={handleStep(index)}
                 sx={{
-                  fontWeight: activeStep === index ? 'bold' : 'regular',
-                  color: activeStep === index ? 'black' : 'gray',
-                  borderBottom: activeStep === index ? '2px solid black' : 'none',
-                  paddingBottom: '2px',
-                  fontSize: { xs: '9px', sm: '10px', md: '11px', lg: '12px' }
+                  cursor: isStepDisabled ? 'not-allowed' : 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  position: 'relative',
+                  padding: '0 10px',
                 }}
               >
-                {label}
-              </Typography>
-            </Box>
-            {index < steps.length - 1 && (
-              <ArrowForwardIosIcon sx={{ fontSize: 12, verticalAlign: 'middle', color: 'gray' }} />
-            )}
-          </React.Fragment>
-        ))}
+                <Typography
+                  variant="body1"
+                  component="span"
+                  sx={{
+                    fontWeight: activeStep === index ? 'bold' : 'regular',
+                    color: activeStep === index ? 'black' : 'gray',
+                    borderBottom: activeStep === index ? '2px solid black' : 'none',
+                    paddingBottom: '2px',
+                    fontSize: { xs: '9px', sm: '10px', md: '11px', lg: '12px' }
+                  }}
+                >
+                  {step[0]}
+                </Typography>
+              </Box>
+              {index < steps.length - 1 && (
+                <ArrowForwardIosIcon sx={{ fontSize: 12, verticalAlign: 'middle', color: 'gray' }} />
+              )}
+            </React.Fragment>
+          );
+        })}
       </Box>
 
       <Box sx={{ marginTop: '20px' }}>
@@ -397,12 +717,12 @@ const StepperComponent: React.FC<StepperComponentProps> = ({
           </Button>
         )}
 
-
-      {activeStep !== 4 && (
+      {activeStep !== steps.length - 1 && (
         <Button
           variant="contained"
           onClick={handleNext}
-          disabled={activeStep === steps.length - 1}
+          // NEXT button is disabled if current active step and previous steps are not completed 
+          disabled={!steps.slice(0, activeStep + 1).every(step => step[1] === 'completed')}
           sx={{
             textTransform: 'none',
             fontWeight: 'regular',
@@ -415,6 +735,8 @@ const StepperComponent: React.FC<StepperComponentProps> = ({
               backgroundColor: '#ffffff', // Change to desired disabled background color
               color: '#1C1C1C', // Change to desired disabled text color
               border: '1px solid #757575', // Change to desired disabled border color
+              cursor: 'not-allowed',
+              pointerEvents: 'all !important'
             }
           }}
         >

@@ -166,7 +166,7 @@ export const LabeledTextArea: React.FC<{
       <LabeledTextAreaContainer
         className={_.compact(["labeledTextAreaContainer", className]).join(" ")}
       >
-        <Typography sx={{ color: theme.palette.secondary.main }}>{label}</Typography>
+        <Typography sx={{ color: theme.palette.secondary.main, fontWeight:'medium' }}>{label}</Typography>
 
         {warning && (
           <Box className="warning" minWidth='100px' maxWidth='150px' sx={{ color: "white", padding: '10px', borderRadius: '20px', backgroundColor: warningColor, textAlign: 'center' }}>

@@ -254,6 +254,8 @@ export const MainPage: React.FC<{}> = (props) => {
 
       console.timeEnd("zk-dl");
       recordTimeForActivity("finishedDownloading");
+
+
     };
 
     downloadZKey();
@@ -266,17 +268,77 @@ export const MainPage: React.FC<{}> = (props) => {
 
 
 
-  const [steps, setSteps] = useState([
-    'SEND RESET EMAIL',
-    'COPY/PASTE DKIM SIG',
-    'ADD ADDRESS',
-    'PROVE',
-    'VERIFY & MINT'
+  // const [steps, setSteps] = useState([
+  //   'SEND RESET EMAIL',
+  //   'COPY/PASTE DKIM SIG',
+  //   'ADD ADDRESS',
+  //   'PROVE',
+  //   'VERIFY & MINT'
+  // ]);
+
+  const [steps, setSteps] = useState<[string, 'completed' | 'uncompleted'][]>([
+    ['SEND RESET EMAIL', 'completed'],
+    ['COPY/PASTE DKIM SIG', 'uncompleted'],
+    ['ADD ADDRESS', 'uncompleted'],
+    ['PROVE', 'uncompleted'],
+    ['VERIFY & MINT', 'uncompleted']
   ]);
 
   const [activeStep, setActiveStep] = useState<number>(0);
 
+  const markStepCompleted = (index: number) => {
+    setSteps(prevSteps => {
+      const newSteps = [...prevSteps];
+      newSteps[index][1] = 'completed';
+      return newSteps;
+    });
+  };
+
+  const markStepUncompleted = (index: number) => {
+    setSteps(prevSteps => {
+      const newSteps = [...prevSteps];
+      newSteps[index][1] = 'uncompleted';
+      return newSteps;
+    });
+  };
+
+
+  useEffect(() => {
+    // i'm not sure if this if statement check is correct,  after the &&
+    // i want to make sure the user actually put something in the 'Full Email with Headers' section OR if they logged in with Google they actually selected an email and it's not the default localStorage.emailFull=DOMException
+    // this code works but there's probably a better check?
+    if (emailFull != '' && emailFull != 'DOMException') {
+      markStepCompleted(1); // Mark 'COPY/PASTE DKIM SIG' step as completed
+    } else {
+      markStepUncompleted(1); // Mark 'COPY/PASTE DKIM SIG' step as uncompleted
+    }
+  }, [emailFull]);
+
+
+  useEffect(() => {
+    if (ethereumAddress != '') {
+      markStepCompleted(2); // Mark 'ADD ADDRESS' step as completed
+    } else {
+      markStepUncompleted(2); // Mark 'ADD ADDRESS' step as uncompleted
+    }
+  }, [ethereumAddress]);
+
+
+  useEffect(() => {
+    if (status === 'proof-files-downloaded-successfully' ) {
+      markStepCompleted(3); // Mark 'PROVE' step as completed
+    } else {
+      // markStepUncompleted(3); // Mark 'PROVE' step as uncompleted 
+    }
+  }, [status]);
+
+
+
+
   const theme = useTheme()
+
+
+
 
   return (
     <Grid container >
@@ -578,99 +640,14 @@ export const MainPage: React.FC<{}> = (props) => {
 
           <Column>
           <SubHeader>Input</SubHeader>
-          {/* {inputMethod || !import.meta.env.VITE_GOOGLE_CLIENT_ID ? null : (
-            <EmailInputMethod
-              disabled={true}
-              onClickGoogle={() => {
-                try {
-                  setIsFetchEmailLoading(true);
-                  setInputMethod("GOOGLE");
-                  googleLogIn();
-                } catch (e) {
-                  console.log(e);
-                  setIsFetchEmailLoading(false);
-                }
-              }}
-              onClickEMLFile={() => {
-                setInputMethod("EML_FILE");
-              }}
-            />
-          )}
-          {inputMethod ? (
-            <TextButton onClick={() => setInputMethod(null)}>
-              ←{"  "}Go Back
-            </TextButton>
-          ) : null} */}
-          {inputMethod === "GOOGLE" ? (
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                flexDirection: "column",
-                padding: "1.25rem",
-              }}
-            >
-              {isFetchEmailLoading ? (
-                <div className="loader" />
-              ) : (
-                <>
-                <Typography variant="h6" sx={{ marginBottom: '1rem' }}>
-                  Highlighted Twitter email will be used 
-                </Typography>
-                <div style={{ pointerEvents: 'none' }}>
-                  {fetchedEmails.map((email, index) => (
-                    <div
-                      key={email.id}
-                      style={{
-                        borderBottom: "1px solid lightgrey",
-                        width: "100%",
-                        padding: "0 1rem",
-                        display: "flex",
-                        justifyContent: "space-between",
-                        cursor: 'pointer',
-                        color:
-                          email.decodedContents === emailFull
-                            ? 'black'
-                            : theme.palette.secondary.main,
-                        borderTop: index === 0 ? "1px solid white" : "none", // Conditional border top
-                      }}
-                      onClick={() => {
-                        setEmailFull(email.decodedContents);
-                      }}
-                    >
-                      <p>{email.subject}</p>
-                      <p>{formatDateTime(email.internalDate)}</p>
-                    </div>
-                  ))}
-                </div>
-              </>
-              )}
-            </div>
-          ) : null}
-          {inputMethod === "EML_FILE" || !import.meta.env.VITE_GOOGLE_CLIENT_ID ? (
-            <>
-              {/* {" "}
-              <DragAndDropTextBox onFileDrop={onFileDrop}/>
-              <h3
-                style={{
-                  textAlign: "center",
-                  marginTop: "0rem",
-                  marginBottom: "0rem",
-                }}
-              >
-                OR
-              </h3> */}
-              <LabeledTextArea
-                disabled={true}
-                label="Full Email with Headers"
-                value={emailFull}
-                onChange={(e) => {
-                  setEmailFull(e.currentTarget.value);
-                }}
-              />
-            </>
-          ) : null}
+          <LabeledTextArea
+            disabled={true}
+            label="Full Email with Headers"
+            value={emailFull}
+            onChange={(e) => {
+              setEmailFull(e.currentTarget.value);
+            }}
+          />
           <SingleLineInput
             disabled={true}
             label="Ethereum Address"
