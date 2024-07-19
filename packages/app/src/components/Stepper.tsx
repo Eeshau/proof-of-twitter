@@ -590,10 +590,8 @@
 
 // export default StepperComponent;
 
-
-
 import React, { ReactNode } from 'react';
-import { Box, Typography, Button } from '@mui/material';
+import { Box, Typography, Button, useTheme } from '@mui/material';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
 interface StepperComponentProps {
@@ -609,17 +607,14 @@ const StepperComponent: React.FC<StepperComponentProps> = ({
   activeStep,
   setActiveStep
 }) => {
+  const theme = useTheme();
 
-
-  // marks current step as completed only if previous steps are completed
   const handleStep = (step: number) => () => {
     if (step <= activeStep || steps[step - 1][1] === 'completed') {
       setActiveStep(step);
     }
   };
 
-
-  // checks that the current active step is completed and if all the previous steps are completed before letting us go to the next step
   const handleNext = () => {
     if (
       activeStep < steps.length - 1 &&
@@ -629,25 +624,20 @@ const StepperComponent: React.FC<StepperComponentProps> = ({
     }
   };
 
-  
-  // just sets active step to the previous last step
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
-
-
   return (
     <Box sx={{ width: '100%', position: 'relative', marginY: '50px' }}>
       <Box />
-      {/* Light grey bar */}
       <Box
         sx={{
           display: 'flex',
           alignItems: 'center',
           position: 'relative',
           zIndex: 2,
-          borderBottom: '1px solid #e0e0e0',
+          // borderBottom: `1px solid ${theme.palette.divider}`,
         }}
       >
         {steps.map((step, index) => {
@@ -669,17 +659,17 @@ const StepperComponent: React.FC<StepperComponentProps> = ({
                   component="span"
                   sx={{
                     fontWeight: activeStep === index ? 'bold' : 'regular',
-                    color: activeStep === index ? 'black' : 'gray',
-                    borderBottom: activeStep === index ? '2px solid black' : 'none',
+                    color: activeStep === index ? theme.palette.accent.main : theme.palette.text.secondary,
+                    borderBottom: activeStep === index ? `2px solid ${theme.palette.accent.main}` : 'none',
                     paddingBottom: '2px',
-                    fontSize: { xs: '9px', sm: '10px', md: '11px', lg: '12px' }
+                    fontSize: { xxs:'5px', xs: '6px', sm: '10px', md: '8px', lg: '8px', xl: '12px' }
                   }}
                 >
                   {step[0]}
                 </Typography>
               </Box>
               {index < steps.length - 1 && (
-                <ArrowForwardIosIcon sx={{ fontSize: 12, verticalAlign: 'middle', color: 'gray' }} />
+                <ArrowForwardIosIcon sx={{ fontSize: {xs:5, sm:7, md:12}, verticalAlign: 'middle', color: theme.palette.text.secondary }} />
               )}
             </React.Fragment>
           );
@@ -699,17 +689,17 @@ const StepperComponent: React.FC<StepperComponentProps> = ({
               textTransform: 'none',
               fontWeight: 'regular',
               padding: '10px 35px',
-              border: '1px solid #1C1C1C',
+              border: `1px solid ${theme.palette.text.primary}`,
               marginY: '9px',
-              color: '#1C1C1C',
-              '&:hover':{
-                backgroundColor: '#1C1C1C',
-                color: '#ffffff'
+              color: theme.palette.text.primary,
+              '&:hover': {
+                backgroundColor: theme.palette.text.primary,
+                color: theme.palette.background.paper
               },
               '&.Mui-disabled': {
-                backgroundColor: '#ffffff', // Change to desired disabled background color
-                color: '#1C1C1C', // Change to desired disabled text color
-                border: '1px solid #757575' // Change to desired disabled border color
+                backgroundColor: theme.palette.background.paper,
+                color: theme.palette.text.primary,
+                border: `1px solid ${theme.palette.text.disabled}`
               }
             }}
           >
@@ -717,32 +707,31 @@ const StepperComponent: React.FC<StepperComponentProps> = ({
           </Button>
         )}
 
-      {activeStep !== steps.length - 1 && (
-        <Button
-          variant="contained"
-          onClick={handleNext}
-          // NEXT button is disabled if current active step and previous steps are not completed 
-          disabled={!steps.slice(0, activeStep + 1).every(step => step[1] === 'completed')}
-          sx={{
-            textTransform: 'none',
-            fontWeight: 'regular',
-            padding: '10px 35px',
-            backgroundColor: '#1C1C1C',
-            border: '1px solid #1C1C1C',
-            marginY: '9px',
-            color: '#ffffff',
-            '&.Mui-disabled': {
-              backgroundColor: '#ffffff', // Change to desired disabled background color
-              color: '#1C1C1C', // Change to desired disabled text color
-              border: '1px solid #757575', // Change to desired disabled border color
-              cursor: 'not-allowed',
-              pointerEvents: 'all !important'
-            }
-          }}
-        >
-          Next
-        </Button>
-      )}
+        {activeStep !== steps.length - 1 && (
+          <Button
+            variant="contained"
+            onClick={handleNext}
+            disabled={!steps.slice(0, activeStep + 1).every(step => step[1] === 'completed')}
+            sx={{
+              textTransform: 'none',
+              fontWeight: 'regular',
+              padding: '10px 35px',
+              backgroundColor: theme.palette.text.primary,
+              border: `1px solid ${theme.palette.text.primary}`,
+              marginY: '9px',
+              color: theme.palette.background.paper,
+              '&.Mui-disabled': {
+                backgroundColor: theme.palette.background.paper,
+                color: theme.palette.text.primary,
+                border: `1px solid ${theme.palette.text.disabled}`,
+                cursor: 'not-allowed',
+                pointerEvents: 'all !important'
+              }
+            }}
+          >
+            Next
+          </Button>
+        )}
       </Box>
     </Box>
   );

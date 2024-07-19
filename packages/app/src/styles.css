@@ -36,9 +36,6 @@ code {
 }
 
 
-.App-link {
-  color: #61dafb;
-}
 
 @keyframes App-logo-spin {
   from {
@@ -54,7 +51,7 @@ a {
 }
 
 a:hover {
-  text-decoration: underline black;
+  opacity: 85%;
 }
 
 
