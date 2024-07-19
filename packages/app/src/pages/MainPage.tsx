@@ -372,7 +372,7 @@ export const MainPage: React.FC<{}> = (props) => {
 
 
       
-      <Grid item xs={12} md={6} sx={{backgroundColor:'#ffbfbf', background:'radial-gradient(70.71% 70.71% at 50% 50%, #FFF 19%, rgba(255, 255, 255, 0.00) 61%), linear-gradient(38deg, rgba(255, 255, 255, 0.00) 60%, rgba(255, 255, 255, 0.69) 100%), linear-gradient(45deg, #FFF 10%, rgba(255, 255, 255, 0.00) 23.5%), linear-gradient(36deg, #FFF 12.52%, rgba(255, 255, 255, 0.00) 76.72%), linear-gradient(214deg, rgba(255, 255, 255, 0.00) 0%, rgba(255, 220, 234, 0.40) 37.53%, rgba(255, 255, 255, 0.00) 71%), linear-gradient(212deg, rgba(255, 255, 255, 0.00) 15%, #E4F1FE 72.5%, rgba(255, 255, 255, 0.00) 91.5%)'}}>
+      <Grid item xs={12} md={6} sx={{   maxHeight: '100vh', overflowY: 'auto', backgroundColor:'#ffbfbf', background:'radial-gradient(70.71% 70.71% at 50% 50%, #FFF 19%, rgba(255, 255, 255, 0.00) 61%), linear-gradient(38deg, rgba(255, 255, 255, 0.00) 60%, rgba(255, 255, 255, 0.69) 100%), linear-gradient(45deg, #FFF 10%, rgba(255, 255, 255, 0.00) 23.5%), linear-gradient(36deg, #FFF 12.52%, rgba(255, 255, 255, 0.00) 76.72%), linear-gradient(214deg, rgba(255, 255, 255, 0.00) 0%, rgba(255, 220, 234, 0.40) 37.53%, rgba(255, 255, 255, 0.00) 71%), linear-gradient(212deg, rgba(255, 255, 255, 0.00) 15%, #E4F1FE 72.5%, rgba(255, 255, 255, 0.00) 91.5%)'}}>
       <Nav splitscreen={true}/>
       
       <Box sx={{backgroundColor:'#FFFFFF', padding:'20px', color:'#000000', minHeight:'650px', paddingX:'60px'}} >
@@ -817,8 +817,8 @@ export const MainPage: React.FC<{}> = (props) => {
 
 
 
-      <Grid item xs={12} md={6} sx={{backgroundColor:'#C3C3C3' }}>
-        <Typography  sx={{color:'#ffffff'}}>HERE IS WHERE WE WILL PUT THE INSTRUCTION STEP VIDEO ON THE RIGHT SIDE </Typography>
+      <Grid item xs={12} md={6} sx={{ maxHeight: '100vh',     overflow: 'hidden', backgroundColor:'#C3C3C3' }}>
+        {/* <Typography  sx={{color:'#ffffff'}}>HERE IS WHERE WE WILL PUT THE INSTRUCTION STEP VIDEO ON THE RIGHT SIDE </Typography>
         
         {activeStep ==0 && (
             <Typography  sx={{color:'#ffffff'}}>video for step 0</Typography>
@@ -834,7 +834,7 @@ export const MainPage: React.FC<{}> = (props) => {
         )}
         {activeStep ==4 && (
             <Typography sx={{color:'#ffffff'}}>video for step 4</Typography>
-        )}
+        )} */}
         <Video/>
       </Grid>
 
