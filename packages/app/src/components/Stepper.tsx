@@ -594,6 +594,7 @@ import React, { ReactNode } from 'react';
 import { Box, Typography, Button, useTheme } from '@mui/material';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
+// Define the types for the props
 interface StepperComponentProps {
   children: ReactNode;
   steps: [string, 'completed' | 'uncompleted'][];
@@ -610,7 +611,7 @@ const StepperComponent: React.FC<StepperComponentProps> = ({
   const theme = useTheme();
 
   const handleStep = (step: number) => () => {
-    if (step <= activeStep || steps[step - 1][1] === 'completed') {
+    if (step <= activeStep || steps.slice(0, step).every(s => s[1] === 'completed')) {
       setActiveStep(step);
     }
   };
@@ -620,12 +621,12 @@ const StepperComponent: React.FC<StepperComponentProps> = ({
       activeStep < steps.length - 1 &&
       steps.slice(0, activeStep + 1).every(step => step[1] === 'completed')
     ) {
-      setActiveStep((prevActiveStep) => prevActiveStep + 1);
+      setActiveStep(activeStep + 1);
     }
   };
 
   const handleBack = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep - 1);
+    setActiveStep(activeStep - 1);
   };
 
   return (
@@ -641,7 +642,7 @@ const StepperComponent: React.FC<StepperComponentProps> = ({
         }}
       >
         {steps.map((step, index) => {
-          const isStepDisabled = !(index <= activeStep || steps[index - 1][1] === 'completed');
+          const isStepDisabled = !steps.slice(0, index).every(s => s[1] === 'completed');
           return (
             <React.Fragment key={step[0]}>
               <Box
@@ -662,14 +663,14 @@ const StepperComponent: React.FC<StepperComponentProps> = ({
                     color: activeStep === index ? theme.palette.accent.main : theme.palette.text.secondary,
                     borderBottom: activeStep === index ? `2px solid ${theme.palette.accent.main}` : 'none',
                     paddingBottom: '2px',
-                    fontSize: { xxs:'5px', xs: '6px', sm: '10px', md: '8px', lg: '8px', xl: '12px' }
+                    fontSize: { xxs: '5px', xs: '6px', sm: '10px', md: '8px', lg: '8px', xl: '12px' }
                   }}
                 >
                   {step[0]}
                 </Typography>
               </Box>
               {index < steps.length - 1 && (
-                <ArrowForwardIosIcon sx={{ fontSize: {xs:5, sm:7, md:12}, verticalAlign: 'middle', color: theme.palette.text.secondary }} />
+                <ArrowForwardIosIcon sx={{ fontSize: { xs: 5, sm: 7, md: 12 }, verticalAlign: 'middle', color: theme.palette.text.secondary }} />
               )}
             </React.Fragment>
           );

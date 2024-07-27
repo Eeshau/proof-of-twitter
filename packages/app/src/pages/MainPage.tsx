@@ -339,7 +339,7 @@ export const MainPage: React.FC<{}> = (props) => {
 
 
   useEffect(() => {
-    if (status === 'proof-files-downloaded-successfully' ) {
+    if (status === 'done' ) {
       markStepCompleted(3); // Mark 'PROVE' step as completed
     } else {
       // markStepUncompleted(3); // Mark 'PROVE' step as uncompleted 

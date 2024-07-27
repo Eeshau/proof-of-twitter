@@ -71,6 +71,7 @@ export async function fetchProfile(
    */
   
   export type RawEmailResponse = {
+    id: string | null | undefined;
     subject: string;
     internalDate: string;
     decodedContents: string;
